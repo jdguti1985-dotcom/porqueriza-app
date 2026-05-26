@@ -1,0 +1,25 @@
+# Archivos del sistema
+.DS_Store
+.AppleDouble
+.LSOverride
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Node (si usas node)
+node_modules/
+package-lock.json
+
+# Descargas locales
+*.backup
+*.tmp

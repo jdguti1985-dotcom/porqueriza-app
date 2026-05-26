@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Porqueriza">
+    <meta name="theme-color" content="#FDF7F2">
+    <title>🐷 Porqueriza App</title>
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%23B84400' width='180' height='180'/><text x='90' y='100' font-size='100' text-anchor='middle' dominant-baseline='middle'>🐷</text></svg>">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-text-size-adjust: 100%;
+        }
+        
+        html, body {
+            width: 100%;
+            height: 100%;
+            background: #FDF7F2;
+            font-family: "IBM Plex Sans", "Helvetica Neue", sans-serif;
+            color: #2C1A10;
+        }
+        
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .app {
+            width: 100%;
+            max-width: 100%;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #FDF7F2;
+            position: fixed;
+            overflow: hidden;
+        }
+        
+        .content {
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 20px 16px 90px 16px;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .page {
+            width: 100%;
+        }
+        
+        .card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 12px rgba(44,26,16,.08);
+            margin-bottom: 14px;
+        }
+        
+        .sora {
+            font-family: "Sora", sans-serif;
+            font-weight: 700;
+        }
+        
+        .btn {
+            border: none;
+            border-radius: 12px;
+            padding: 11px 18px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: opacity .15s;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        .btn:active {
+            opacity: 0.8;
+        }
+        
+        .btn-p {
+            background: #B84400;
+            color: #fff;
+        }
+        
+        .btn-s {
+            background: #F5EDE4;
+            color: #B84400;
+        }
+        
+        .btn-g {
+            background: #1D6F42;
+            color: #fff;
+        }
+        
+        .btn-d {
+            background: #FEE2E2;
+            color: #C23232;
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+        
+        .btn-sm {
+            padding: 8px 14px;
+            font-size: 13px;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            border: 1.5px solid #E0CDBE;
+            border-radius: 10px;
+            padding: 11px 13px;
+            font-size: 14px;
+            font-family: inherit;
+            background: #FDF7F2;
+            color: #2C1A10;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            border-color: #B84400;
+            background: #fff;
+        }
+        
+        select {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23B84400' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 36px;
+        }
+        
+        .lbl {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #6B4D38;
+            margin-bottom: 5px;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 3px 9px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 7px 13px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            white-space: nowrap;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+        
+        .row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 13px 0;
+            border-bottom: 1px solid #F0E6DC;
+        }
+        
+        .row:last-child {
+            border-bottom: none;
+        }
+        
+        .ava {
+            width: 40px;
+            height: 40px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+        
+        .grid2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+        
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,.52);
+            z-index: 1000;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .sheet {
+            background: #fff;
+            border-radius: 24px 24px 0 0;
+            width: 100%;
+            max-width: 430px;
+            max-height: 92vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            padding: 22px 18px 32px;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .tabbar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            background: rgba(255,252,248,.96);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #E0CDBE;
+            display: flex;
+            z-index: 200;
+            padding-bottom: max(0px, env(safe-area-inset-bottom));
+        }
+        
+        .tabit {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px 4px 16px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-family: inherit;
+            gap: 2px;
+            -webkit-appearance: none;
+            appearance: none;
+            min-height: 44px;
+            justify-content: center;
+        }
+        
+        .tabit-icon {
+            font-size: 21px;
+            line-height: 1;
+        }
+        
+        .tabit-label {
+            font-size: 10px;
+            font-weight: 600;
+        }
+        
+        .notif {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3000;
+            padding: 12px 22px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 14px;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        
+        .kpi {
+            background: #fff;
+            border-radius: 14px;
+            padding: 14px 12px;
+            box-shadow: 0 2px 8px rgba(44,26,16,.06);
+        }
+        
+        .kpi-val {
+            font-family: "Sora", sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            line-height: 1;
+        }
+        
+        .kpi-lbl {
+            font-size: 11px;
+            color: #9E7A65;
+            margin-top: 3px;
+        }
+        
+        .sec-hd {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .filters {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 14px;
+            overflow-x: auto;
+            padding-bottom: 4px;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .filters::-webkit-scrollbar {
+            display: none;
+        }
+        
+        .divider {
+            height: 1px;
+            background: #F0E6DC;
+            margin: 12px 0;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        
+        /* Notificación */
+        .notif-ok {
+            background: #2F6840;
+            color: #fff;
+        }
+        
+        .notif-err {
+            background: #C23232;
+            color: #fff;
+        }
+        
+        @supports (padding: max(0px)) {
+            .sheet {
+                padding-bottom: calc(32px + max(0px, env(safe-area-inset-bottom)));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app" id="app">
+        <div class="content" id="content"></div>
+        <nav class="tabbar" id="tabbar"></nav>
+        <div id="modal"></div>
+        <div id="notif"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/recharts/2.10.3/recharts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.min.js"></script>
+
+    <script>
+        const { useState, useEffect, useMemo, useRef, useCallback } = React;
+        const { BarChart, Bar, LineChart, Line, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, AreaChart, Area } = window;
+
+        const STORAGE = "porqueriza_v1";
+        const CATS = ["Alimento","Medicamento","Vacunas","Equipo","Instalaciones","Mano de obra","Otro"];
+        const BREEDS = ["Landrace","Yorkshire","Duroc","Hampshire","Pietrain","Mestizo","Otro"];
+        const COLORS = ["#B84400","#3D7A52","#E8A850","#4A6FA5","#8B4513","#6B7280","#9C4A8A"];
+        const DEFAULT_SET = { farmName:"Mi Porqueriza", owner:"", currency:"₡" };
+
+        const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
+        const fmt = (n,c="₡") => `${c}${Number(n||0).toLocaleString("es-CR")}`;
+        const fmtDate = d => !d?"-":new Date(d+"T12:00:00").toLocaleDateString("es-CR",{day:"2-digit",month:"short",year:"numeric"});
+        const addDays = (d,n) => { const dt=new Date(d+"T12:00:00"); dt.setDate(dt.getDate()+n); return dt.toISOString().split("T")[0]; };
+        const daysUntil = d => !d?null:Math.ceil((new Date(d+"T12:00:00")-new Date())/(86400000));
+        const today = () => new Date().toISOString().split("T")[0];
+
+        function App() {
+            const [tab, setTab] = useState("dashboard");
+            const [animals, setAnimals] = useState([]);
+            const [partos, setPartos] = useState([]);
+            const [expenses, setExpenses] = useState([]);
+            const [sales, setSales] = useState([]);
+            const [settings, setSettings] = useState(DEFAULT_SET);
+            const [loading, setLoading] = useState(true);
+            const [notif, setNotif] = useState(null);
+
+            useEffect(() => {
+                (async () => {
+                    try {
+                        const r = await window.storage?.get?.(STORAGE);
+                        if (r) {
+                            const d = JSON.parse(r.value);
+                            if (d.animals) setAnimals(d.animals);
+                            if (d.partos) setPartos(d.partos);
+                            if (d.expenses) setExpenses(d.expenses);
+                            if (d.sales) setSales(d.sales);
+                            if (d.settings) setSettings({...DEFAULT_SET,...d.settings});
+                        }
+                    } catch(e) {}
+                    setLoading(false);
+                })();
+            }, []);
+
+            const persist = (a,p,e,s,st) => {
+                try { window.storage?.set?.(STORAGE, JSON.stringify({animals:a,partos:p,expenses:e,sales:s,settings:st})); } catch(err) {}
+            };
+            
+            const updAnimals = a => { setAnimals(a); persist(a,partos,expenses,sales,settings); };
+            const updPartos = p => { setPartos(p); persist(animals,p,expenses,sales,settings); };
+            const updExpenses = e => { setExpenses(e); persist(animals,partos,e,sales,settings); };
+            const updSales = s => { setSales(s); persist(animals,partos,expenses,s,settings); };
+            const updSettings = st => { setSettings(st); persist(animals,partos,expenses,sales,st); };
+
+            const toast = (msg, type="ok") => {
+                setNotif({msg,type});
+                setTimeout(()=>setNotif(null),3000);
+            };
+
+            const metrics = useMemo(()=>{
+                const sows = animals.filter(a=>a.type==="cerda"&&a.status==="activo");
+                const boars = animals.filter(a=>a.type==="barraco"&&a.status==="activo");
+                const preg = partos.filter(p=>p.status==="gestacion");
+                const births = partos.filter(p=>p.status==="parto"||p.status==="destete");
+                const live = births.reduce((s,p)=>s+Number(p.pigletsAlive||0),0);
+                const dead = births.reduce((s,p)=>s+Number(p.pigletsDead||0),0);
+                const weaned = births.reduce((s,p)=>s+Number(p.pigletsWeaned||0),0);
+                const rev = sales.reduce((s,x)=>s+Number(x.pricePerHead||0)*Number(x.quantity||0),0);
+                const exp = expenses.reduce((s,x)=>s+Number(x.amount||0),0);
+                const avg = births.length>0?(live/births.length).toFixed(1):"-";
+                const mort = (live+dead)>0?((dead/(live+dead))*100).toFixed(1):"0";
+                return {sows:sows.length,boars:boars.length,preg:preg.length,births:births.length,live,dead,weaned,rev,exp,profit:rev-exp,avg,mort};
+            },[animals,partos,expenses,sales]);
+
+            const alerts = useMemo(()=>{
+                const res=[];
+                partos.forEach(p=>{
+                    if(p.status==="gestacion"&&p.expectedBirthDate){
+                        const d=daysUntil(p.expectedBirthDate);
+                        if(d!==null&&d<=14){
+                            const sow=animals.find(a=>a.id===p.sowId);
+                            res.push({type:"parto",msg:`${sow?.name||sow?.tag||"Cerda"} — parto`,date:p.expectedBirthDate,days:d,sev:d<=3?"h":d<=7?"m":"l"});
+                        }
+                    }
+                    if(p.status==="parto"&&p.birthDate){
+                        const wd=addDays(p.birthDate,21);
+                        const d=daysUntil(wd);
+                        if(d!==null&&d<=7&&d>=0){
+                            const sow=animals.find(a=>a.id===p.sowId);
+                            res.push({type:"destete",msg:`${sow?.name||sow?.tag||"Cerda"} — destete`,date:wd,days:d,sev:d<=2?"h":"m"});
+                        }
+                    }
+                });
+                return res.sort((a,b)=>a.days-b.days);
+            },[animals,partos]);
+
+            if(loading) return React.createElement("div",{style:{display:"flex",alignItems:"center",justifyContent:"center",height:"100vh",flexDirection:"column",gap:12,background:"#FDF7F2"}},
+                React.createElement("div",{style:{fontSize:52}},"🐷"),
+                React.createElement("div",{className:"sora",style:{color:"#B84400",fontSize:18},"Cargando...")
+            );
+
+            const TABS = [
+                {id:"dashboard",icon:"📊",label:"Inicio"},
+                {id:"animals",icon:"🐷",label:"Animales"},
+                {id:"partos",icon:"🐣",label:"Cría"},
+                {id:"finanzas",icon:"💰",label:"Finanzas"},
+                {id:"analisis",icon:"📈",label:"Análisis"},
+                {id:"config",icon:"⚙️",label:"Más"},
+            ];
+
+            return React.createElement(React.Fragment, null,
+                notif && React.createElement("div",{className:`notif notif-${notif.type}`},notif.msg),
+                React.createElement("div",{className:"page",style:{display:tab==="dashboard"?"block":"none"}},
+                    React.createElement(Dashboard,{metrics,animals,partos,alerts,settings})
+                ),
+                React.createElement("div",{className:"page",style:{display:tab==="animals"?"block":"none"}},
+                    React.createElement(Animales,{animals,partos,upd:updAnimals,s:settings,toast})
+                ),
+                React.createElement("div",{className:"page",style:{display:tab==="partos"?"block":"none"}},
+                    React.createElement(Reproduccion,{animals,partos,upd:updPartos,s:settings,toast})
+                ),
+                React.createElement("div",{className:"page",style:{display:tab==="finanzas"?"block":"none"}},
+                    React.createElement(Finanzas,{expenses,sales,animals,updE:updExpenses,updS:updSales,metrics,s:settings,toast})
+                ),
+                React.createElement("div",{className:"page",style:{display:tab==="analisis"?"block":"none"}},
+                    React.createElement(Analisis,{animals,partos,expenses,sales,s:settings})
+                ),
+                React.createElement("div",{className:"page",style:{display:tab==="config"?"block":"none"}},
+                    React.createElement(Config,{settings,updSettings,animals,partos,expenses,sales,setAnimals,setPartos,setExpenses,setSales,setSettings,persist,toast,alerts})
+                ),
+                React.createElement("nav",{className:"tabbar"},
+                    TABS.map(t=>React.createElement("button",{key:t.id,className:"tabit",onClick:()=>setTab(t.id),style:{color:tab===t.id?"#B84400":"#9E7A65"}},
+                        React.createElement("span",{className:"tabit-icon"},t.icon),
+                        React.createElement("span",{className:"tabit-label"},t.label)
+                    ))
+                )
+            );
+        }
+
+        // ─── DASHBOARD ────────────────────────────────────
+        function Dashboard({metrics,animals,partos,alerts,settings}){
+            const recent=[...partos].sort((a,b)=>new Date(b.serviceDate)-new Date(a.serviceDate)).slice(0,3);
+            const cur=settings.currency;
+            
+            return React.createElement("div",{style:{paddingTop:20}},
+                React.createElement("div",{style:{marginBottom:18,paddingBottom:16,borderBottom:"1px solid #E0CDBE"}},
+                    React.createElement("div",{style:{fontSize:12,color:"#9E7A65"}},`Bienvenido a`),
+                    React.createElement("h1",{className:"sora",style:{fontSize:24,fontWeight:800,color:"#2C1A10",marginBottom:4}},settings.farmName),
+                    settings.owner && React.createElement("div",{style:{fontSize:12,color:"#9E7A65"}},"Propietario: "+settings.owner)
+                ),
+                alerts.length>0 && React.createElement("div",{className:"card",style:{background:"#FFF8E1",border:"1px solid #F5CC30",paddingBottom:12}},
+                    React.createElement("div",{style:{fontWeight:700,color:"#7A5800",marginBottom:8,fontSize:13}},"⚠️ Próximos eventos ("+alerts.length+")"),
+                    alerts.slice(0,3).map((a,i)=>React.createElement("div",{key:i,style:{display:"flex",justifyContent:"space-between",fontSize:12,color:"#5A4000",marginBottom:4}},
+                        React.createElement("span",null,(a.type==="parto"?"🤰":"🐽")+" "+a.msg),
+                        React.createElement("span",{style:{fontWeight:700,color:a.sev==="h"?"#C23232":a.sev==="m"?"#8B6000":"#3D7A52"}},a.days<=0?"HOY":a.days+"d")
+                    ))
+                ),
+                React.createElement("div",{className:"kpi-grid"},
+                    [{val:`🐷 ${metrics.sows}`,lbl:"Cerdas activas",c:"#B84400"},
+                     {val:`🐗 ${metrics.boars}`,lbl:"Barracos activos",c:"#4A6FA5"},
+                     {val:`🤰 ${metrics.preg}`,lbl:"En gestación",c:"#D4700A"},
+                     {val:`🐽 ${metrics.weaned}`,lbl:"Total destetados",c:"#3D7A52"},
+                     {val:fmt(metrics.rev,cur),lbl:"Ingresos",c:"#3D7A52",small:true},
+                     {val:fmt(metrics.profit,cur),lbl:"Ganancia neta",c:metrics.profit>=0?"#3D7A52":"#C23232",small:true},
+                     {val:metrics.avg,lbl:"Lechones/parto",c:"#2C1A10"},
+                     {val:metrics.mort+"%",lbl:"Mortalidad",c:parseFloat(metrics.mort)>10?"#C23232":"#3D7A52"}
+                    ].map((k,i)=>React.createElement("div",{key:i,className:"kpi"},
+                        React.createElement("div",{className:"kpi-val",style:{color:k.c,fontSize:k.small?17:22}},k.val),
+                        React.createElement("div",{className:"kpi-lbl"},k.lbl)
+                    ))
+                ),
+                React.createElement("div",{className:"card"},
+                    React.createElement("div",{className:"sora",style:{fontWeight:700,fontSize:14,marginBottom:12}},"💵 Balance financiero"),
+                    React.createElement("div",{className:"grid2",style:{marginBottom:10}},
+                        React.createElement("div",{style:{background:"#DCFCE7",borderRadius:10,padding:10,textAlign:"center"}},
+                            React.createElement("div",{style:{fontSize:12,color:"#3D7A52",fontWeight:600}},"Ingresos"),
+                            React.createElement("div",{style:{fontWeight:700,color:"#3D7A52"}},fmt(metrics.rev,cur))
+                        ),
+                        React.createElement("div",{style:{background:"#FEE2E2",borderRadius:10,padding:10,textAlign:"center"}},
+                            React.createElement("div",{style:{fontSize:12,color:"#C23232",fontWeight:600}},"Gastos"),
+                            React.createElement("div",{style:{fontWeight:700,color:"#C23232"}},fmt(metrics.exp,cur))
+                        )
+                    ),
+                    (metrics.rev+metrics.exp)>0 && React.createElement("div",{style:{background:"#F5EDE4",borderRadius:8,height:9,overflow:"hidden"}},
+                        React.createElement("div",{style:{height:"100%",background:"#3D7A52",width:Math.min(100,metrics.rev/(metrics.rev+metrics.exp)*100)+"%",transition:"width .5s"}})
+                    )
+                ),
+                recent.length>0 && React.createElement("div",{className:"card"},
+                    React.createElement("div",{className:"sora",style:{fontWeight:700,fontSize:14,marginBottom:10}},"🐣 Última actividad"),
+                    recent.map(p=>{
+                        const sow=animals.find(a=>a.id===p.sowId);
+                        const icon={servicio:"💉",gestacion:"🤰",parto:"🐣",destete:"✅"}[p.status]||"🐷";
+                        const bg={servicio:"#E0F2FE",gestacion:"#FFF3CD",parto:"#DCFCE7",destete:"#F5F5F5"}[p.status]||"#F5EDE4";
+                        const tc={servicio:"#1E6FA0",gestacion:"#8B6000",parto:"#3D7A52",destete:"#6B7280"}[p.status]||"#6B7280";
+                        return React.createElement("div",{className:"row",key:p.id},
+                            React.createElement("div",{className:"ava",style:{background:bg}},icon),
+                            React.createElement("div",{style:{flex:1}},
+                                React.createElement("div",{style:{fontWeight:600,fontSize:13,color:"#2C1A10"}},sow?.name||sow?.tag||"Cerda"),
+                                React.createElement("div",{style:{fontSize:11,color:"#9E7A65"}},
+                                    p.status==="gestacion"?`Parto esp. ${fmtDate(p.expectedBirthDate)}`:
+                                    p.status==="parto"?`${p.pigletsAlive} vivos • ${p.pigletsDead} muertos`:
+                                    p.status==="destete"?`${p.pigletsWeaned} destetados`:
+                                    `Servicio ${fmtDate(p.serviceDate)}`
+                                )
+                            ),
+                            React.createElement("span",{className:"badge",style:{background:bg,color:tc}},p.status)
+                        );
+                    })
+                )
+            );
+        }
+
+        // ─── ANIMALES ────────────────────────────────────
+        function Animales({animals,partos,upd,s,toast}){
+            const [filter,setFilter]=useState("todos");
+            const [showModal,setShowModal]=useState(false);
+            const [form,setForm]=useState({});
+
+            const blank=()=>({id:"",tag:"",name:"",type:"cerda",breed:"Mestizo",birthDate:"",entryDate:today(),weight:"",status:"activo",notes:""});
+            const openAdd=()=>{ setForm(blank()); setShowModal(true); };
+            const openEdit=a=>{ setForm({...a}); setShowModal(true); };
+            const save=()=>{
+                if(!form.tag&&!form.name){ toast("Ingrese arete o nombre","err"); return; }
+                if(form.id){ upd(animals.map(a=>a.id===form.id?form:a)); toast("Animal actualizado"); }
+                else{ upd([...animals,{...form,id:genId()}]); toast("Animal registrado"); }
+                setShowModal(false);
+            };
+            const remove=id=>{ if(confirm("¿Eliminar animal?")){ upd(animals.filter(a=>a.id!==id)); }};
+
+            const list=animals.filter(a=>filter==="todos"||a.type===filter||(filter==="inactivo"&&a.status!=="activo"));
+
+            return React.createElement(React.Fragment,null,
+                React.createElement("div",{style:{marginBottom:18}},
+                    React.createElement("div",{className:"sec-hd"},
+                        React.createElement("h2",{className:"sora",style:{fontSize:20,fontWeight:800,color:"#2C1A10"}},"🐷 Animales"),
+                        React.createElement("button",{className:"btn btn-p btn-sm",onClick:openAdd},"+")
+                    ),
+                    React.createElement("div",{className:"filters"},
+                        [{id:"todos",label:`Todos (${animals.length})`},
+                         {id:"cerda",label:`Cerdas (${animals.filter(a=>a.type==="cerda"&&a.status==="activo").length})`},
+                         {id:"barraco",label:`Barracos (${animals.filter(a=>a.type==="barraco"&&a.status==="activo").length})`},
+                         {id:"inactivo",label:"Inactivos"}
+                        ].map(f=>React.createElement("button",{key:f.id,className:"chip",onClick:()=>setFilter(f.id),style:{background:filter===f.id?"#B84400":"#F5EDE4",color:filter===f.id?"#fff":"#6B4D38"}},f.label))
+                    )
+                ),
+                list.length===0?React.createElement("div",{style:{textAlign:"center",padding:"50px 20px",color:"#9E7A65"}},
+                    React.createElement("div",{style:{fontSize:48,marginBottom:10}},"🐷"),
+                    React.createElement("div",{style:{fontWeight:600}},"Sin animales registrados")
+                ):React.createElement("div",{className:"card",style:{padding:"4px 16px"}},
+                    list.map(a=>{
+                        const ap=partos.filter(p=>p.sowId===a.id);
+                        const born=ap.reduce((s,p)=>s+Number(p.pigletsAlive||0),0);
+                        return React.createElement("div",{className:"row",key:a.id,onClick:()=>openEdit(a),style:{cursor:"pointer"}},
+                            React.createElement("div",{className:"ava",style:{background:a.type==="cerda"?"#FFE4CC":"#E0ECF8"}},a.type==="cerda"?"🐷":"🐗"),
+                            React.createElement("div",{style:{flex:1}},
+                                React.createElement("div",{style:{fontWeight:600,fontSize:14,color:"#2C1A10"}},a.name||a.tag||"Sin nombre"),
+                                React.createElement("div",{style:{fontSize:11,color:"#9E7A65"}},
+                                    `${a.tag?a.tag+" • ":""}${a.breed}${a.type==="cerda"&&ap.length>0?` • ${ap.length} partos • ${born} vivos`:""}`
+                                )
+                            ),
+                            React.createElement("div",{style:{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:5}},
+                                React.createElement("span",{className:"badge",style:{background:a.status==="activo"?"#DCFCE7":"#F5F5F5",color:a.status==="activo"?"#3D7A52":"#9E7A65"}},a.status),
+                                React.createElement("button",{className:"btn btn-d",onClick:e=>{e.stopPropagation();remove(a.id)}},"✕")
+                            )
+                        );
+                    })
+                ),
+                showModal && React.createElement("div",{className:"overlay",onClick:()=>setShowModal(false)},
+                    React.createElement("div",{className:"sheet",onClick:e=>e.stopPropagation()},
+                        React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}},
+                            React.createElement("h3",{className:"sora",style:{fontSize:17,fontWeight:700,color:"#2C1A10"}},form.id?"Editar":"Nuevo"," Animal"),
+                            React.createElement("button",{onClick:()=>setShowModal(false),style:{background:"none",border:"none",fontSize:22,color:"#9E7A65",cursor:"pointer"}},"✕")
+                        ),
+                        React.createElement("div",{style:{display:"grid",gap:13}},
+                            React.createElement("div",null,
+                                React.createElement("label",{className:"lbl"},"Tipo"),
+                                React.createElement("div",{style:{display:"flex",gap:8}},
+                                    ["cerda","barraco"].map(t=>React.createElement("button",{key:t,className:"chip",onClick:()=>setForm({...form,type:t}),style:{flex:1,justifyContent:"center",background:form.type===t?"#B84400":"#F5EDE4",color:form.type===t?"#fff":"#6B4D38"}},t==="cerda"?"🐷 Cerda":"🐗 Barraco"))
+                                )
+                            ),
+                            React.createElement("div",{className:"grid2"},
+                                React.createElement("div",null,React.createElement("label",{className:"lbl"},"Arete"),React.createElement("input",{className:"inp",value:form.tag||"",onChange:e=>setForm({...form,tag:e.target.value}),placeholder:"A-001"})),
+                                React.createElement("div",null,React.createElement("label",{className:"lbl"},"Nombre"),React.createElement("input",{className:"inp",value:form.name||"",onChange:e=>setForm({...form,name:e.target.value}),placeholder:"Manchas"}))
+                            ),
+                            React.createElement("div",null,React.createElement("label",{className:"lbl"},"Raza"),React.createElement("select",{className:"inp",value:form.breed||"Mestizo",onChange:e=>setForm({...form,breed:e.target.value})},BREEDS.map(b=>React.createElement("option",{key:b},b)))),
+                            React.createElement("div",{className:"grid2"},
+                                React.createElement("div",null,React.createElement("label",{className:"lbl"},"F. Nacimiento"),React.createElement("input",{type:"date",className:"inp",value:form.birthDate||"",onChange:e=>setForm({...form,birthDate:e.target.value})})),
+                                React.createElement("div",null,React.createElement("label",{className:"lbl"},"F. Ingreso"),React.createElement("input",{type:"date",className:"inp",value:form.entryDate||"",onChange:e=>setForm({...form,entryDate:e.target.value})}))
+                            ),
+                            React.createElement("div",{className:"grid2"},
+                                React.createElement("div",null,React.createElement("label",{className:"lbl"},"Peso (kg)"),React.createElement("input",{type:"number",className:"inp",value:form.weight||"",onChange:e=>setForm({...form,weight:e.target.value}),min:"0"})),
+                                React.createElement("div",null,React.createElement("label",{className:"lbl"},"Estado"),React.createElement("select",{className:"inp",value:form.status||"activo",onChange:e=>setForm({...form,status:e.target.value})},["activo","inactivo","vendido","muerto"].map(x=>React.createElement("option",{key:x},x))))
+                            ),
+                            React.createElement("div",null,React.createElement("label",{className:"lbl"},"Notas"),React.createElement("textarea",{className:"inp",value:form.notes||"",onChange:e=>setForm({...form,notes:e.target.value}),rows:"2",style:{resize:"none"}})),
+                            React.createElement("button",{className:"btn btn-p",onClick:save,style:{width:"100%",marginTop:4}},form.id?"Guardar":"Registrar animal")
+                        )
+                    )
+                )
+            );
+        }
+
+        // ─── REPRODUCCIÓN ────────────────────────────────
+        function Reproduccion({animals,partos,upd,s,toast}){
+            const [filter,setFilter]=useState("todos");
+            const [showModal,setShowModal]=useState(false);
+            const [form,setForm]=useState({});
+            const sows=animals.filter(a=>a.type==="cerda"&&a.status==="activo");
+            const boars=animals.filter(a=>a.type==="barraco"&&a.status==="activo");
+
+            const blank=()=>({id:"",sowId:"",boarId:"",serviceDate:today(),expectedBirthDate:"",birthDate:"",status:"servicio",pigletsAlive:0,pigletsDead:0,pigletsWeaned:0,weaningDate:"",salePrice:0,notes:""});
+            const openAdd=()=>{ setForm(blank()); setShowModal(true); };
+            const openEdit=p=>{ setForm({...p}); setShowModal(true); };
+            const calcExp=d=>d?addDays(d,114):"";
+            const save=()=>{
+                if(!form.sowId){ toast("Seleccione una cerda","err"); return; }
+                const f={...form,expectedBirthDate:form.expectedBirthDate||calcExp(form.serviceDate),pigletsBorn:Number(form.pigletsAlive||0)+Number(form.pigletsDead||0)};
+                if(f.id){ upd(partos.map(p=>p.id===f.id?f:p)); toast("Registro actualizado"); }
+                else{ upd([...partos,{...f,id:genId()}]); toast("Registro creado"); }
+                setShowModal(false);
+            };
+            const remove=id=>{ if(confirm("¿Eliminar registro?")){ upd(partos.filter(p=>p.id!==id)); }};
+
+            const list=partos.filter(p=>filter==="todos"||p.status===filter);
+            const sorted=[...list].sort((a,b)=>new Date(b.serviceDate)-new Date(a.serviceDate));
+
+            const SI={
+                servicio: {lbl:"Servicio",bg:"#E0F2FE",c:"#1E6FA0",icon:"💉"},
+                gestacion:{lbl:"Gestación",bg:"#FFF3CD",c:"#8B6000",icon:"🤰"},
+                parto:    {lbl:"Parto",bg:"#DCFCE7",c:"#3D7A52",icon:"🐣"},
+                destete:  {lbl:"Destete",bg:"#F5F5F5",c:"#6B7280",icon:"✅"},
+                cancelado:{lbl:"Cancelado",bg:"#FEE2E2",c:"#C23232",icon:"❌"},
+            };
+
+            return React.createElement(React.Fragment,null,
+                React.createElement("div",{style:{marginBottom:18}},
+                    React.createElement("div",{className:"sec-hd"},
+                        React.createElement("h2",{className:"sora",style:{fontSize:20,fontWeight:800}},"🐣 Control Reproductivo"),
+                        React.createElement("button",{className:"btn btn-p btn-sm",onClick:openAdd},"+")
+                    ),
+                    React.createElement("div",{className:"filters"},
+                        [{id:"todos",label:`Todos (${partos.length})`},
+                         {id:"gestacion",label:`Gestando`},
+                         {id:"parto",label:`Partos`},
+                         {id:"destete",label:`Destetados`}
+                        ].map(f=>React.createElement("button",{key:f.id,className:"chip",onClick:()=>setFilter(f.id),style:{background:filter===f.id?"#B84400":"#F5EDE4",color:filter===f.id?"#fff":"#6B4D38"}},f.label))
+                    )
+                ),
+                sorted.length===0?React.createElement("div",{style:{textAlign:"center",padding:"50px 20px",color:"#9E7A65"}},React.createElement("div",{style:{fontSize:48,marginBottom:10}},"🐣"),React.createElement("div",{style:{fontWeight:600}},"Sin registros")):
+                React.createElement("div",null,sorted.map(p=>{
+                    const sow=animals.find(a=>a.id===p.sowId);
+                    const si=SI[p.status]||SI.servicio;
+                    return React.createElement("div",{className:"card",key:p.id,onClick:()=>openEdit(p),style:{cursor:"pointer"}},
+                        React.createElement("div",{style:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:10}},
+                            React.createElement("div",null,
+                                React.createElement("div",{style:{fontWeight:700,fontSize:15}},sow?.name||sow?.tag||"Cerda"),
+                                React.createElement("div",{style:{fontSize:11,color:"#9E7A65"}},fmtDate(p.serviceDate))
+                            ),
+                            React.createElement("span",{className:"badge",style:{background:si.bg,color:si.c}},si.icon," ",si.lbl)
+                        ),
+                        React.createElement("div",{style:{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:6}},
+                            p.status==="gestacion"&&React.createElement("div",{style:{background:"#FFF3CD",borderRadius:8,padding:8,textAlign:"center"}},
+                                React.createElement("div",{style:{fontSize:10,color:"#9E7A65"}},"Parto esperado"),
+                                React.createElement("div",{style:{fontSize:12,fontWeight:700,color:"#8B6000"}},fmtDate(p.expectedBirthDate))
+                            ),
+                            (p.status==="parto"||p.status==="destete")&&[
+                                React.createElement("div",{key:"v",style:{background:"#DCFCE7",borderRadius:8,padding:8,textAlign:"center"}},
+                                    React.createElement("div",{style:{fontSize:10}},"Vivos"),
+                                    React.createElement("div",{style:{fontSize:18,fontWeight:800,color:"#3D7A52"}},p.pigletsAlive)
+                                ),
+                                React.createElement("div",{key:"m",style:{background:"#FEE2E2",borderRadius:8,padding:8,textAlign:"center"}},
+                                    React.createElement("div",{style:{fontSize:10}},"Muertos"),
+                                    React.createElement("div",{style:{fontSize:18,fontWeight:800,color:"#C23232"}},p.pigletsDead)
+                                )
+                            ],
+                            p.status==="destete"&&React.createElement("div",{style:{background:"#E0F2FE",borderRadius:8,padding:8,textAlign:"center"}},
+                                React.createElement("div",{style:{fontSize:10}},"Destetados"),
+                                React.createElement("div",{style:{fontSize:18,fontWeight:800,color:"#1E6FA0"}},p.pigletsWeaned)
+                            )
+                        ),
+                        React.createElement("button",{className:"btn btn-d",style:{width:"100%",marginTop:10},onClick:e=>{e.stopPropagation();remove(p.id)}},"Eliminar")
+                    );
+                })),
+                showModal && React.createElement("div",{className:"overlay",onClick:()=>setShowModal(false)},
+                    React.createElement("div",{className:"sheet",onClick:e=>e.stopPropagation()},
+                        React.createElement("div",{style:{display:"flex",justifyContent:"space-between",marginBottom:18}},
+                            React.createElement("h3",{className:"sora",style:{fontSize:17,fontWeight:700}},form.id?"Editar":"Nuevo"," Registro"),
+                            React.createElement("button",{onClick:()=>setShowModal(false),style:{background:"none",border:"none",fontSize:22,cursor:"pointer"}},"✕")
+                        ),
+                        React.createElement("div",{style:{display:"grid",gap:13}},
+                            React.createElement("div",null,
+                                React.createElement("label",{className:"lbl"},"Estado"),
+                                React.createElement("div",{style:{display:"flex",gap:6,flexWrap:"wrap"}},
+                                    Object.entries(SI).map(([k,v])=>React.createElement("button",{key:k,className:"chip",onClick:()=>setForm({...form,status:k}),style:{background:form.status===k?v.c:"#F5EDE4",color:form.status===k?"#fff":v.c,border:`1px solid ${v.c}`}},v.icon," ",v.lbl))
+                                )
+                            ),
+                            React.createElement("div",null,React.createElement("label",{className:"lbl"},"Cerda"),React.createElement("select",{className:"inp",value:form.sowId||"",onChange:e=>setForm({...form,sowId:e.target.value})},React.createElement("option",{value:""},"-- Seleccionar --"),sows.map(s=>React.createElement("option",{key:s.id,value:s.id},s.name||s.tag)))),
+                            React.createElement("div",{className:"grid2"},
+                                React.createElement("div",null,React.createElement("label",{className:"lbl"},"F. Servicio"),React.createElement("input",{type:"date",className:"inp",value:form.serviceDate||"",onChange:e=>setForm({...form,serviceDate:e.target.value,expectedBirthDate:calcExp(e.target.value)})})),
+                                React.createElement("div",null,React.createElement("label",{className:"lbl"},"Parto esperado"),React.createElement("input",{type:"date",className:"inp",value:form.expectedBirthDate||"",onChange:e=>setForm({...form,expectedBirthDate:e.target.value})}))
+                            ),
+                            (form.status==="parto"||form.status==="destete")&&[
+                                React.createElement("div",{key:"d",null,React.createElement("label",{className:"lbl"},"F. Parto"),React.createElement("input",{type:"date",className:"inp",value:form.birthDate||"",onChange:e=>setForm({...form,birthDate:e.target.value})})),
+                                React.createElement("div",{key:"p",className:"grid2"},
+                                    React.createElement("div",null,React.createElement("label",{className:"lbl"},"Vivos"),React.createElement("input",{type:"number",className:"inp",value:form.pigletsAlive||0,onChange:e=>setForm({...form,pigletsAlive:e.target.value}),min:"0"})),
+                                    React.createElement("div",null,React.createElement("label",{className:"lbl"},"Muertos"),React.createElement("input",{type:"number",className:"inp",value:form.pigletsDead||0,onChange:e=>setForm({...form,pigletsDead:e.target.value}),min:"0"}))
+                                )
+                            ],
+                            form.status==="destete"&&[
+                                React.createElement("div",{key:"w",className:"grid2"},
+                                    React.createElement("div",null,React.createElement("label",{className:"lbl"},"Destetados"),React.createElement("input",{type:"number",className:"inp",value:form.pigletsWeaned||0,onChange:e=>setForm({...form,pigletsWeaned:e.target.value}),min:"0"})),
+                                    React.createElement("div",null,React.createElement("label",{className:"lbl"},"F. Destete"),React.createElement("input",{type:"date",className:"inp",value:form.weaningDate||"",onChange:e=>setForm({...form,weaningDate:e.target.value})}))
+                                ),
+                                React.createElement("div",{key:"s",null,React.createElement("label",{className:"lbl"},"Precio x lechón"),React.createElement("input",{type:"number",className:"inp",value:form.salePrice||0,onChange:e=>setForm({...form,salePrice:e.target.value}),min:"0"}))
+                            ],
+                            React.createElement("div",null,React.createElement("label",{className:"lbl"},"Notas"),React.createElement("textarea",{className:"inp",value:form.notes||"",onChange:e=>setForm({...form,notes:e.target.value}),rows:"2"})),
+                            React.createElement("button",{className:"btn btn-p",onClick:save,style:{width:"100%"}},form.id?"Guardar":"Registrar")
+                        )
+                    )
+                )
+            );
+        }
+
+        // ─── FINANZAS ────────────────────────────────────
+        function Finanzas({expenses,sales,animals,updE,updS,metrics,s,toast}){
+            const [tab,setTab]=useState("resumen");
+            const [showExpMod,setShowExpMod]=useState(false);
+            const [showSalMod,setShowSalMod]=useState(false);
+            const [ef,setEf]=useState({});
+            const [sf,setSf]=useState({});
+            const cur=s.currency;
+
+            const blankE=()=>({date:today(),category:"Alimento",description:"",amount:"",animalId:""});
+            const blankS=()=>({date:today(),quantity:"",pricePerHead:"",buyerName:"",notes:""});
+
+            const saveE=()=>{
+                if(!ef.amount||!ef.date){toast("Complete fecha y monto","err");return;}
+                updE([...expenses,{...ef,id:genId(),amount:Number(ef.amount)}]);
+                toast("Gasto registrado");setShowExpMod(false);
+            };
+            const saveS=()=>{
+                if(!sf.quantity||!sf.pricePerHead||!sf.date){toast("Complete los campos","err");return;}
+                updS([...sales,{...sf,id:genId(),quantity:Number(sf.quantity),pricePerHead:Number(sf.pricePerHead)}]);
+                toast("Venta registrada");setShowSalMod(false);
+            };
+
+            return React.createElement(React.Fragment,null,
+                React.createElement("div",{style:{marginBottom:18}},
+                    React.createElement("div",{className:"sec-hd"},
+                        React.createElement("h2",{className:"sora",style:{fontSize:20,fontWeight:800}},"💰 Finanzas"),
+                        React.createElement("div",{style:{display:"flex",gap:8}},
+                            React.createElement("button",{className:"btn btn-s btn-sm",onClick:()=>{setEf(blankE());setShowExpMod(true);}},"+ Gasto"),
+                            React.createElement("button",{className:"btn btn-p btn-sm",onClick:()=>{setSf(blankS());setShowSalMod(true);}},"+ Venta")
+                        )
+                    ),
+                    React.createElement("div",{style:{background:"linear-gradient(135deg,#B84400,#E8642A)",borderRadius:18,padding:20,marginBottom:14,color:"#fff"}},
+                        React.createElement("div",{style:{fontSize:12,opacity:.8}},"Ganancia neta"),
+                        React.createElement("div",{className:"sora",style:{fontSize:30,fontWeight:800}},fmt(metrics.profit,cur)),
+                        React.createElement("div",{style:{display:"flex",gap:22,marginTop:12}},
+                            React.createElement("div",null,React.createElement("div",{style:{fontSize:10,opacity:.75}},"Ingresos"),React.createElement("div",{style:{fontSize:15,fontWeight:700}},"+"+fmt(metrics.rev,cur))),
+                            React.createElement("div",null,React.createElement("div",{style:{fontSize:10,opacity:.75}},"Gastos"),React.createElement("div",{style:{fontSize:15,fontWeight:700}},"-"+fmt(metrics.exp,cur)))
+                        )
+                    )
+                ),
+                React.createElement("div",{style:{display:"flex",gap:8,marginBottom:14}},
+                    ["resumen","gastos","ventas"].map(t=>React.createElement("button",{key:t,className:"chip",onClick:()=>setTab(t),style:{flex:1,justifyContent:"center",background:tab===t?"#B84400":"#F5EDE4",color:tab===t?"#fff":"#6B4D38"}},t))
+                ),
+                tab==="gastos"&&React.createElement("div",{className:"card",style:{padding:"4px 16px"}},
+                    expenses.length===0?React.createElement("div",{style:{textAlign:"center",padding:40,color:"#9E7A65"}},"Sin gastos"):
+                    [...expenses].sort((a,b)=>new Date(b.date)-new Date(a.date)).map(e=>React.createElement("div",{className:"row",key:e.id},
+                        React.createElement("div",{className:"ava",style:{background:"#FEE2E2"}},"📋"),
+                        React.createElement("div",{style:{flex:1}},
+                            React.createElement("div",{style:{fontWeight:600,fontSize:13}},e.description||e.category),
+                            React.createElement("div",{style:{fontSize:11,color:"#9E7A65"}},e.category," • ",fmtDate(e.date))
+                        ),
+                        React.createElement("div",{style:{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:4}},
+                            React.createElement("span",{style:{fontWeight:700,color:"#C23232"}},fmt(e.amount,cur)),
+                            React.createElement("button",{className:"btn btn-d",onClick:()=>updE(expenses.filter(x=>x.id!==e.id))},"✕")
+                        )
+                    ))
+                ),
+                tab==="ventas"&&React.createElement("div",{className:"card",style:{padding:"4px 16px"}},
+                    sales.length===0?React.createElement("div",{style:{textAlign:"center",padding:40,color:"#9E7A65"}},"Sin ventas"):
+                    [...sales].sort((a,b)=>new Date(b.date)-new Date(a.date)).map(x=>React.createElement("div",{className:"row",key:x.id},
+                        React.createElement("div",{className:"ava",style:{background:"#DCFCE7"}},"🐽"),
+                        React.createElement("div",{style:{flex:1}},
+                            React.createElement("div",{style:{fontWeight:600,fontSize:13}},x.quantity," lechones",x.buyerName?" → "+x.buyerName:""),
+                            React.createElement("div",{style:{fontSize:11,color:"#9E7A65"}},fmt(x.pricePerHead,cur),"/ud • ",fmtDate(x.date))
+                        ),
+                        React.createElement("div",{style:{display:"flex",flexDirection:"column",alignItems:"flex-end",gap:4}},
+                            React.createElement("span",{style:{fontWeight:700,color:"#3D7A52"}},fmt(x.pricePerHead*x.quantity,cur)),
+                            React.createElement("button",{className:"btn btn-d",onClick:()=>updS(sales.filter(y=>y.id!==x.id))},"✕")
+                        )
+                    ))
+                ),
+                tab==="resumen"&&React.createElement("div",{className:"card"},
+                    React.createElement("div",{style:{fontWeight:700,marginBottom:12,fontSize:14}},"Resumen financiero"),
+                    React.createElement("div",{className:"grid2"},
+                        React.createElement("div",{style:{background:"#DCFCE7",borderRadius:10,padding:10,textAlign:"center"}},
+                            React.createElement("div",{style:{fontSize:11,color:"#3D7A52"}},"Ingresos"),
+                            React.createElement("div",{style:{fontWeight:700,color:"#3D7A52",fontSize:15}},fmt(metrics.rev,cur))
+                        ),
+                        React.createElement("div",{style:{background:"#E0F2FE",borderRadius:10,padding:10,textAlign:"center"}},
+                            React.createElement("div",{style:{fontSize:11,color:"#1E6FA0"}},"Lechones vendidos"),
+                            React.createElement("div",{style:{fontWeight:700,color:"#1E6FA0",fontSize:15}},sales.reduce((s,x)=>s+Number(x.quantity||0),0))
+                        )
+                    )
+                ),
+                showExpMod&&React.createElement("div",{className:"overlay",onClick:()=>setShowExpMod(false)},
+                    React.createElement("div",{className:"sheet",onClick:e=>e.stopPropagation()},
+                        React.createElement("h3",{className:"sora",style:{fontSize:17,fontWeight:700,marginBottom:18}},"Registrar Gasto"),
+                        React.createElement("div",{style:{display:"grid",gap:12}},
+                            React.createElement("div",{className:"grid2"},
+                                React.createElement("div",null,React.createElement("label",{className:"lbl"},"Fecha"),React.createElement("input",{type:"date",className:"inp",value:ef.date||"",onChange:e=>setEf({...ef,date:e.target.value})})),
+                                React.createElement("div",null,React.createElement("label",{className:"lbl"},"Monto"),React.createElement("input",{type:"number",className:"inp",value:ef.amount||"",onChange:e=>setEf({...ef,amount:e.target.value}),min:"0"}))
+                            ),
+                            React.createElement("div",null,React.createElement("label",{className:"lbl"},"Categoría"),React.createElement("select",{className:"inp",value:ef.category||"Alimento",onChange:e=>setEf({...ef,category:e.target.value})},CATS.map(c=>React.createElement("option",{key:c},c)))),
+                            React.createElement("div",null,React.createElement("label",{className:"lbl"},"Descripción"),React.createElement("input",{className:"inp",value:ef.description||"",onChange:e=>setEf({...ef,description:e.target.value}),placeholder:"Alimento 50kg"})),
+                            React.createElement("button",{className:"btn btn-p",onClick:saveE,style:{width:"100%"}},"Registrar gasto")
+                        )
+                    )
+                ),
+                showSalMod&&React.createElement("div",{className:"overlay",onClick:()=>setShowSalMod(false)},
+                    React.createElement("div",{className:"sheet",onClick:e=>e.stopPropagation()},
+                        React.createElement("h3",{className:"sora",style:{fontSize:17,fontWeight:700,marginBottom:18}},"Registrar Venta"),
+                        React.createElement("div",{style:{display:"grid",gap:12}},
+                            React.createElement("div",null,React.createElement("label",{className:"lbl"},"Fecha"),React.createElement("input",{type:"date",className:"inp",value:sf.date||"",onChange:e=>setSf({...sf,date:e.target.value})})),
+                            React.createElement("div",{className:"grid2"},
+                                React.createElement("div",null,React.createElement("label",{className:"lbl"},"Cantidad"),React.createElement("input",{type:"number",className:"inp",value:sf.quantity||"",onChange:e=>setSf({...sf,quantity:e.target.value}),min:"0"})),
+                                React.createElement("div",null,React.createElement("label",{className:"lbl"},"Precio/lechón"),React.createElement("input",{type:"number",className:"inp",value:sf.pricePerHead||"",onChange:e=>setSf({...sf,pricePerHead:e.target.value}),min:"0"}))
+                            ),
+                            React.createElement("div",{style:{background:"#DCFCE7",borderRadius:10,padding:12,textAlign:"center"}},
+                                React.createElement("div",{style:{fontSize:12,color:"#3D7A52"}},"Total"),
+                                React.createElement("div",{className:"sora",style:{fontSize:22,fontWeight:800,color:"#3D7A52"}},fmt((sf.quantity||0)*(sf.pricePerHead||0),cur))
+                            ),
+                            React.createElement("div",null,React.createElement("label",{className:"lbl"},"Comprador"),React.createElement("input",{className:"inp",value:sf.buyerName||"",onChange:e=>setSf({...sf,buyerName:e.target.value}),placeholder:"Carnicería..."})),
+                            React.createElement("button",{className:"btn btn-p",onClick:saveS,style:{width:"100%"}},"Registrar venta")
+                        )
+                    )
+                )
+            );
+        }
+
+        // ─── ANÁLISIS ────────────────────────────────────
+        function Analisis({animals,partos,expenses,sales,s}){
+            const cur=s.currency;
+            return React.createElement("div",null,
+                React.createElement("h2",{className:"sora",style:{fontSize:20,fontWeight:800,marginBottom:18}},"📈 Análisis"),
+                React.createElement("div",{className:"card"},
+                    React.createElement("div",{style:{fontWeight:700,marginBottom:12,fontSize:14}},"📊 Estadísticas"),
+                    React.createElement("div",{className:"grid2"},
+                        [{icon:"🐣",val:partos.length,lbl:"Registros cría"},
+                         {icon:"💸",val:expenses.length,lbl:"Gastos"},
+                         {icon:"🤝",val:sales.length,lbl:"Ventas"},
+                         {icon:"📈",val:sales.reduce((s,x)=>s+Number(x.quantity||0),0),lbl:"Lechones vendidos"}
+                        ].map(x=>React.createElement("div",{key:x.lbl,style:{background:"#F5EDE4",borderRadius:10,padding:12,textAlign:"center"}},
+                            React.createElement("div",{style:{fontSize:22}},x.icon),
+                            React.createElement("div",{className:"sora",style:{fontSize:22,fontWeight:800,color:"#2C1A10"}},x.val),
+                            React.createElement("div",{style:{fontSize:11,color:"#9E7A65"}},x.lbl)
+                        ))
+                    )
+                ),
+                React.createElement("div",{className:"card"},
+                    React.createElement("div",{style:{fontWeight:700,marginBottom:12,fontSize:14}},"💡 Análisis IA (próximamente)"),
+                    React.createElement("div",{style:{fontSize:13,color:"#9E7A65"}},"En la próxima actualización tendrás análisis automáticos con recomendaciones de IA")
+                )
+            );
+        }
+
+        // ─── CONFIG ────────────────────────────────────
+        function Config({settings,updSettings,animals,partos,expenses,sales,setAnimals,setPartos,setExpenses,setSales,setSettings,persist,toast,alerts}){
+            const [sf,setSf]=useState({...settings});
+            const fileRef=useRef();
+
+            const saveSett=()=>{ updSettings(sf); toast("Configuración guardada"); };
+            const exportXLSX=()=>{
+                const wb=XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(animals),"Animales");
+                XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(partos),"Cría");
+                XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(expenses),"Gastos");
+                XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(sales),"Ventas");
+                XLSX.writeFile(wb,`${settings.farmName.replace(/\s+/g,"_")}.xlsx`);
+                toast("Excel exportado");
+            };
+            const backup=()=>{
+                const d=JSON.stringify({animals,partos,expenses,sales,settings,date:new Date().toISOString()},null,2);
+                const a=document.createElement("a");
+                a.href=URL.createObjectURL(new Blob([d],{type:"application/json"}));
+                a.download=`${settings.farmName.replace(/\s+/g,"_")}_backup.json`;
+                a.click();
+                toast("Copia descargada");
+            };
+            const restore=e=>{
+                const file=e.target.files[0];if(!file)return;
+                const r=new FileReader();
+                r.onload=evt=>{
+                    try{
+                        const d=JSON.parse(evt.target.result);
+                        setAnimals(d.animals||[]);
+                        setPartos(d.partos||[]);
+                        setExpenses(d.expenses||[]);
+                        setSales(d.sales||[]);
+                        if(d.settings)setSettings({...DEFAULT_SET,...d.settings});
+                        persist(d.animals||[],d.partos||[],d.expenses||[],d.sales||[],d.settings||settings);
+                        toast("✅ Copia restaurada");
+                    }catch{ toast("Archivo inválido","err"); }
+                };
+                r.readAsText(file);
+                e.target.value="";
+            };
+
+            return React.createElement(React.Fragment,null,
+                React.createElement("h2",{className:"sora",style:{fontSize:20,fontWeight:800,marginBottom:18}},"⚙️ Configuración"),
+                alerts.length>0&&React.createElement("div",{className:"card"},
+                    React.createElement("div",{style:{fontWeight:700,marginBottom:10,fontSize:14}},"🔔 Alertas ("+alerts.length+")"),
+                    alerts.map((a,i)=>React.createElement("div",{className:"row",key:i},
+                        React.createElement("div",{className:"ava",style:{background:a.sev==="h"?"#FEE2E2":"#FFF3CD"}},a.type==="parto"?"🤰":"🐽"),
+                        React.createElement("div",{style:{flex:1}},
+                            React.createElement("div",{style:{fontWeight:600,fontSize:13}},a.msg),
+                            React.createElement("div",{style:{fontSize:11,color:"#9E7A65"}},fmtDate(a.date))
+                        ),
+                        React.createElement("span",{className:"badge",style:{background:a.days<=0?"#FEE2E2":"#FFF3CD",color:a.days<=0?"#C23232":"#8B6000",fontWeight:700}},a.days<=0?"HOY":a.days+"d")
+                    ))
+                ),
+                React.createElement("div",{className:"card"},
+                    React.createElement("div",{style:{fontWeight:700,marginBottom:14,fontSize:14}},"🏠 Datos de la granja"),
+                    React.createElement("div",{style:{display:"grid",gap:12}},
+                        React.createElement("div",null,React.createElement("label",{className:"lbl"},"Nombre"),React.createElement("input",{className:"inp",value:sf.farmName,onChange:e=>setSf({...sf,farmName:e.target.value}),placeholder:"Mi Porqueriza"})),
+                        React.createElement("div",null,React.createElement("label",{className:"lbl"},"Propietario"),React.createElement("input",{className:"inp",value:sf.owner||"",onChange:e=>setSf({...sf,owner:e.target.value}),placeholder:"Tu nombre"})),
+                        React.createElement("div",null,React.createElement("label",{className:"lbl"},"Moneda"),React.createElement("select",{className:"inp",value:sf.currency,onChange:e=>setSf({...sf,currency:e.target.value})},
+                            React.createElement("option",{value:"₡"},"₡ Colones (CRC)"),
+                            React.createElement("option",{value:"$"},"$ Dólares (USD)"),
+                            React.createElement("option",{value:"Q"},"Q Quetzales (GTQ)"),
+                            React.createElement("option",{value:"L"},"L Lempiras (HNL)")
+                        )),
+                        React.createElement("button",{className:"btn btn-p",onClick:saveSett,style:{width:"100%"}},"Guardar configuración")
+                    )
+                ),
+                React.createElement("div",{className:"card"},
+                    React.createElement("div",{style:{fontWeight:700,marginBottom:14,fontSize:14}},"📤 Exportar datos"),
+                    React.createElement("div",{style:{display:"grid",gap:10}},
+                        React.createElement("button",{className:"btn btn-g",onClick:exportXLSX,style:{width:"100%"}},"📊 Exportar Excel (.xlsx)"),
+                        React.createElement("button",{className:"btn btn-s",onClick:()=>window.print(),style:{width:"100%"}},"📄 Exportar PDF (imprimir)")
+                    )
+                ),
+                React.createElement("div",{className:"card"},
+                    React.createElement("div",{style:{fontWeight:700,marginBottom:6,fontSize:14}},"💾 Copias de seguridad"),
+                    React.createElement("div",{style:{fontSize:12,color:"#9E7A65",marginBottom:14}},"Respalda todos tus datos en iPhone"),
+                    React.createElement("div",{style:{display:"grid",gap:10}},
+                        React.createElement("button",{className:"btn btn-p",onClick:backup,style:{width:"100%"}},"⬇️ Descargar copia"),
+                        React.createElement("button",{className:"btn btn-s",onClick:()=>fileRef.current?.click(),style:{width:"100%"}},"⬆️ Restaurar copia"),
+                        React.createElement("input",{type:"file",ref:fileRef,accept:".json",onChange:restore,style:{display:"none"}})
+                    ),
+                    React.createElement("div",{style:{fontSize:12,color:"#9E7A65",marginTop:12,background:"#F5EDE4",borderRadius:10,padding:11}},
+                        "💡 Guarda el archivo en Archivos → iCloud Drive para accederlo desde cualquier dispositivo"
+                    )
+                )
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('content'));
+        root.render(React.createElement(App));
+    </script>
+</body>
+</html>
