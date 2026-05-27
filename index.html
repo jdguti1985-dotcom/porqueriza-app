@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Porqueriza">
+<meta name="theme-color" content="#B84400">
+<title>🐷 Porqueriza App</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@700;800&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{width:100%;height:100%;background:#FDF7F2;font-family:"IBM Plex Sans","Helvetica Neue",Arial,sans-serif;color:#2C1A10;overflow:hidden}
+::-webkit-scrollbar{display:none}
+#app{width:100%;height:100vh;display:flex;flex-direction:column;position:fixed;top:0;left:0}
+#content{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;background:#FDF7F2}
+.page{padding:20px 16px 100px}
+/* Cards */
+.card{background:#fff;border-radius:16px;padding:16px;box-shadow:0 2px 12px rgba(44,26,16,.08);margin-bottom:14px}
+/* Botones */
+.btn{border:none;border-radius:12px;padding:11px 18px;font-weight:600;font-size:14px;cursor:pointer;font-family:inherit;transition:opacity .15s;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn:active{opacity:.75}
+.bp{background:#B84400;color:#fff}
+.bs{background:#F5EDE4;color:#B84400}
+.bg{background:#1D6F42;color:#fff}
+.bd{background:#FEE2E2;color:#C23232;padding:5px 10px;font-size:12px}
+.bsm{padding:8px 14px;font-size:13px}
+/* Inputs */
+input,select,textarea{width:100%;border:1.5px solid #E0CDBE;border-radius:10px;padding:11px 13px;font-size:14px;font-family:inherit;background:#FDF7F2;color:#2C1A10;outline:none;-webkit-appearance:none;appearance:none}
+input:focus,select:focus,textarea:focus{border-color:#B84400;background:#fff}
+select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23B84400' d='M6 8L0 0h12z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:36px}
+textarea{resize:vertical;min-height:75px}
+.lbl{display:block;font-size:12px;font-weight:600;color:#6B4D38;margin-bottom:5px}
+/* Chips y badges */
+.badge{display:inline-block;padding:3px 9px;border-radius:20px;font-size:12px;font-weight:600}
+.chip{display:inline-flex;align-items:center;padding:7px 13px;border-radius:20px;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:inherit;white-space:nowrap}
+/* Layout */
+.row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #F0E6DC}
+.row:last-child{border-bottom:none}
+.ava{width:40px;height:40px;border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+/* Headers */
+.sec-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}
+.filters{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
+/* KPIs */
+.kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.kpi{background:#fff;border-radius:14px;padding:14px 12px;box-shadow:0 2px 8px rgba(44,26,16,.06)}
+.kpi-val{font-family:"Sora",sans-serif;font-size:22px;font-weight:800;line-height:1.1}
+.kpi-lbl{font-size:11px;color:#9E7A65;margin-top:3px}
+/* Modal */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.52);z-index:500;display:flex;align-items:flex-end}
+.sheet{background:#fff;border-radius:24px 24px 0 0;width:100%;max-height:93vh;overflow-y:auto;padding:22px 18px 40px;-webkit-overflow-scrolling:touch}
+/* Tab bar */
+.tabbar{
+  display:flex;
+  background:#FFFFFF;
+  border-top:2px solid #E0CDBE;
+  z-index:200;
+  padding-bottom:max(16px, env(safe-area-inset-bottom));
+  box-shadow:0 -4px 20px rgba(44,26,16,.10);
+  min-height:75px;
+}
+.tabit{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  padding:10px 2px 6px;
+  border:none;
+  background:transparent;
+  font-family:inherit;
+  cursor:pointer;
+  gap:5px;
+  min-height:70px;
+  min-width:44px;
+  -webkit-tap-highlight-color:rgba(184,68,0,.15);
+}
+.tabit:active{background:rgba(184,68,0,.06);border-radius:16px;}
+.tabit-icon{font-size:28px;line-height:1;display:block;}
+.tabit-label{font-size:11px;font-weight:700;display:block;letter-spacing:.2px;}
+/* Toast */
+#toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:9999;padding:12px 22px;border-radius:12px;font-weight:600;font-size:14px;pointer-events:none;display:none;white-space:nowrap}
+/* Formulario grid */
+.form-grid{display:grid;gap:13px}
+/* Status colors */
+.st-servicio{background:#E0F2FE;color:#1E6FA0}
+.st-gestacion{background:#FFF3CD;color:#8B6000}
+.st-parto{background:#DCFCE7;color:#3D7A52}
+.st-destete{background:#F0F9FF;color:#0369A1}
+.st-cancelado{background:#FEE2E2;color:#C23232}
+</style>
+</head>
+<body>
+<div id="app">
+  <div id="content"></div>
+  <nav class="tabbar" id="tabbar"></nav>
+</div>
+<div id="toast"></div>
+<div id="modal-container"></div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  ESTADO Y PERSISTENCIA
+// ═══════════════════════════════════════════════
+const STORAGE_KEY = "porqueriza_v2";
+
+let state = {
+  animals: [],
+  partos: [],
+  expenses: [],
+  sales: [],
+  settings: { farmName:"Mi Porqueriza", owner:"", currency:"₡" }
+};
+
+let currentTab = "dashboard";
+
+function loadState() {
+  try {
+    const s = localStorage.getItem(STORAGE_KEY);
+    if (s) {
+      const d = JSON.parse(s);
+      state = Object.assign({}, state, d);
+    }
+  } catch(e) { console.warn("No se pudieron cargar datos:", e); }
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch(e) {
+    showToast("Error al guardar datos", "err");
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  UTILIDADES
+// ═══════════════════════════════════════════════
+const genId = () => Date.now().toString(36) + Math.random().toString(36).slice(2);
+const fmt = (n) => `${state.settings.currency}${Number(n||0).toLocaleString("es-CR")}`;
+const fmtDate = (d) => !d ? "-" : new Date(d+"T12:00:00").toLocaleDateString("es-CR",{day:"2-digit",month:"short",year:"numeric"});
+const addDays = (d,n) => { const dt = new Date(d+"T12:00:00"); dt.setDate(dt.getDate()+n); return dt.toISOString().split("T")[0]; };
+const daysUntil = (d) => !d ? null : Math.ceil((new Date(d+"T12:00:00") - new Date()) / 86400000);
+const today = () => new Date().toISOString().split("T")[0];
+const esc = (s) => String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+
+function showToast(msg, type="ok") {
+  const t = document.getElementById("toast");
+  t.textContent = (type==="ok"?"✅ ":"❌ ") + msg;
+  t.style.background = type==="ok" ? "#2F6840" : "#C23232";
+  t.style.color = "#fff";
+  t.style.display = "block";
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.display = "none"; }, 3000);
+}
+
+function getMetrics() {
+  const births = state.partos.filter(p => p.status==="parto" || p.status==="destete");
+  const live = births.reduce((s,p) => s+Number(p.pigletsAlive||0), 0);
+  const dead = births.reduce((s,p) => s+Number(p.pigletsDead||0), 0);
+  const weaned = births.reduce((s,p) => s+Number(p.pigletsWeaned||0), 0);
+  const rev = state.sales.reduce((s,x) => s+Number(x.pricePerHead||0)*Number(x.quantity||0), 0);
+  const exp = state.expenses.reduce((s,x) => s+Number(x.amount||0), 0);
+  return {
+    sows: state.animals.filter(a=>a.type==="cerda"&&a.status==="activo").length,
+    boars: state.animals.filter(a=>a.type==="barraco"&&a.status==="activo").length,
+    preg: state.partos.filter(p=>p.status==="gestacion").length,
+    births: births.length, live, dead, weaned, rev, exp, profit: rev-exp,
+    avg: births.length>0 ? (live/births.length).toFixed(1) : "-",
+    mort: (live+dead)>0 ? ((dead/(live+dead))*100).toFixed(1) : "0"
+  };
+}
+
+function getAlerts() {
+  const alerts = [];
+  state.partos.forEach(p => {
+    if (p.status==="gestacion" && p.expectedBirthDate) {
+      const d = daysUntil(p.expectedBirthDate);
+      if (d !== null && d <= 14) {
+        const sow = state.animals.find(a => a.id===p.sowId);
+        alerts.push({type:"parto", msg:`${sow?.name||sow?.tag||"Cerda"} — parto`, date:p.expectedBirthDate, days:d, sev:d<=3?"h":d<=7?"m":"l"});
+      }
+    }
+    if (p.status==="parto" && p.birthDate) {
+      const wd = addDays(p.birthDate, 21);
+      const d = daysUntil(wd);
+      if (d !== null && d >= 0 && d <= 7) {
+        const sow = state.animals.find(a => a.id===p.sowId);
+        alerts.push({type:"destete", msg:`${sow?.name||sow?.tag||"Cerda"} — destete`, date:wd, days:d, sev:d<=2?"h":"m"});
+      }
+    }
+  });
+  return alerts.sort((a,b) => a.days-b.days);
+}
+
+// ═══════════════════════════════════════════════
+//  RENDER PRINCIPAL
+// ═══════════════════════════════════════════════
+const TABS = [
+  {id:"dashboard", icon:"📊", label:"Inicio"},
+  {id:"animals",   icon:"🐷", label:"Animales"},
+  {id:"partos",    icon:"🐣", label:"Cría"},
+  {id:"finanzas",  icon:"💰", label:"Finanzas"},
+  {id:"analisis",  icon:"📈", label:"Análisis"},
+  {id:"config",    icon:"⚙️", label:"Más"},
+];
+
+function renderApp() {
+  document.getElementById("tabbar").innerHTML = TABS.map(t => `
+    <button class="tabit" onclick="switchTab('${t.id}')" style="color:${currentTab===t.id?"#B84400":"#9E7A65"}">
+      <span class="tabit-icon">${t.icon}</span>
+      <span class="tabit-label">${t.label}</span>
+    </button>
+  `).join("");
+
+  const renders = {
+    dashboard: renderDashboard,
+    animals:   renderAnimals,
+    partos:    renderPartos,
+    finanzas:  renderFinanzas,
+    analisis:  renderAnalisis,
+    config:    renderConfig,
+  };
+  document.getElementById("content").innerHTML = (renders[currentTab] || renderDashboard)();
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  renderApp();
+  document.getElementById("content").scrollTop = 0;
+}
+
+// ═══════════════════════════════════════════════
+//  DASHBOARD
+// ═══════════════════════════════════════════════
+function renderDashboard() {
+  const m = getMetrics();
+  const alerts = getAlerts();
+  const recent = [...state.partos].sort((a,b)=>new Date(b.serviceDate||0)-new Date(a.serviceDate||0)).slice(0,4);
+  const SI_ICON = {servicio:"💉",gestacion:"🤰",parto:"🐣",destete:"✅",cancelado:"❌"};
+  const SI_BG   = {servicio:"#E0F2FE",gestacion:"#FFF3CD",parto:"#DCFCE7",destete:"#F0F9FF",cancelado:"#FEE2E2"};
+  const SI_TC   = {servicio:"#1E6FA0",gestacion:"#8B6000",parto:"#3D7A52",destete:"#0369A1",cancelado:"#C23232"};
+
+  return `<div class="page">
+    <div style="margin-bottom:18px">
+      <div style="font-size:12px;color:#9E7A65">Bienvenido a</div>
+      <h1 style="font-family:Sora,sans-serif;font-size:24px;font-weight:800;color:#2C1A10">${esc(state.settings.farmName)}</h1>
+      ${state.settings.owner ? `<div style="font-size:12px;color:#9E7A65">Propietario: ${esc(state.settings.owner)}</div>` : ""}
+    </div>
+
+    ${alerts.length ? `
+    <div class="card" style="background:#FFF8E1;border:1px solid #F5CC30">
+      <div style="font-weight:700;color:#7A5800;margin-bottom:8px;font-size:13px">⚠️ Próximos eventos (${alerts.length})</div>
+      ${alerts.slice(0,4).map(a=>`
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:#5A4000;margin-bottom:4px">
+          <span>${a.type==="parto"?"🤰":"🐽"} ${esc(a.msg)}</span>
+          <strong style="color:${a.sev==="h"?"#C23232":a.sev==="m"?"#8B6000":"#3D7A52"}">${a.days<=0?"HOY":a.days+"d"}</strong>
+        </div>`).join("")}
+    </div>` : ""}
+
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-val" style="color:#B84400">🐷 ${m.sows}</div><div class="kpi-lbl">Cerdas activas</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#4A6FA5">🐗 ${m.boars}</div><div class="kpi-lbl">Barracos activos</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#D4700A">🤰 ${m.preg}</div><div class="kpi-lbl">En gestación</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#3D7A52">🐽 ${m.weaned}</div><div class="kpi-lbl">Total destetados</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#3D7A52;font-size:${m.rev>999999?13:16}px">${fmt(m.rev)}</div><div class="kpi-lbl">Ingresos totales</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:${m.profit>=0?"#3D7A52":"#C23232"};font-size:${Math.abs(m.profit)>999999?13:16}px">${fmt(m.profit)}</div><div class="kpi-lbl">Ganancia neta</div></div>
+      <div class="kpi"><div class="kpi-val">${m.avg}</div><div class="kpi-lbl">Lechones/parto</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:${parseFloat(m.mort)>10?"#C23232":"#3D7A52"}">${m.mort}%</div><div class="kpi-lbl">Mortalidad</div></div>
+    </div>
+
+    <div class="card">
+      <div style="font-family:Sora,sans-serif;font-weight:700;font-size:14px;margin-bottom:12px">💵 Balance financiero</div>
+      <div class="g2" style="margin-bottom:10px">
+        <div style="background:#DCFCE7;border-radius:10px;padding:10px;text-align:center">
+          <div style="font-size:12px;color:#3D7A52;font-weight:600">Ingresos</div>
+          <div style="font-weight:700;color:#3D7A52;font-size:14px">${fmt(m.rev)}</div>
+        </div>
+        <div style="background:#FEE2E2;border-radius:10px;padding:10px;text-align:center">
+          <div style="font-size:12px;color:#C23232;font-weight:600">Gastos</div>
+          <div style="font-weight:700;color:#C23232;font-size:14px">${fmt(m.exp)}</div>
+        </div>
+      </div>
+      ${(m.rev+m.exp)>0 ? `
+      <div style="background:#F5EDE4;border-radius:8px;height:9px;overflow:hidden">
+        <div style="height:100%;background:#3D7A52;border-radius:8px;width:${Math.min(100,m.rev/(m.rev+m.exp)*100)}%;transition:width .5s"></div>
+      </div>` : ""}
+    </div>
+
+    ${recent.length ? `
+    <div class="card">
+      <div style="font-family:Sora,sans-serif;font-weight:700;font-size:14px;margin-bottom:10px">🐣 Última actividad</div>
+      ${recent.map(p => {
+        const sow = state.animals.find(a=>a.id===p.sowId);
+        const ico = SI_ICON[p.status]||"🐷";
+        const bg  = SI_BG[p.status]||"#F5EDE4";
+        const tc  = SI_TC[p.status]||"#6B7280";
+        return `
+        <div class="row">
+          <div class="ava" style="background:${bg}">${ico}</div>
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:13px">${esc(sow?.name||sow?.tag||"Cerda")}</div>
+            <div style="font-size:11px;color:#9E7A65">
+              ${p.status==="gestacion" ? `Parto esp. ${fmtDate(p.expectedBirthDate)}` :
+                p.status==="parto"    ? `${p.pigletsAlive||0} vivos • ${p.pigletsDead||0} muertos` :
+                p.status==="destete"  ? `${p.pigletsWeaned||0} destetados` :
+                `Servicio ${fmtDate(p.serviceDate)}`}
+            </div>
+          </div>
+          <span class="badge" style="background:${bg};color:${tc}">${p.status}</span>
+        </div>`;
+      }).join("")}
+    </div>` : ""}
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════
+//  ANIMALES
+// ═══════════════════════════════════════════════
+let animalFilter = "todos";
+
+function renderAnimals() {
+  const list = state.animals.filter(a =>
+    animalFilter==="todos" ||
+    (animalFilter==="cerda" && a.type==="cerda" && a.status==="activo") ||
+    (animalFilter==="barraco" && a.type==="barraco" && a.status==="activo") ||
+    (animalFilter==="inactivo" && a.status!=="activo")
+  );
+  const chipStyle = (id) => `background:${animalFilter===id?"#B84400":"#F5EDE4"};color:${animalFilter===id?"#fff":"#6B4D38"}`;
+
+  return `<div class="page">
+    <div class="sec-hd">
+      <h2 style="font-family:Sora,sans-serif;font-size:20px;font-weight:800">🐷 Animales</h2>
+      <button class="btn bp bsm" onclick="openAnimalModal()">+ Agregar</button>
+    </div>
+    <div class="filters">
+      <button class="chip" style="${chipStyle("todos")}" onclick="setAnimalFilter('todos')">Todos (${state.animals.length})</button>
+      <button class="chip" style="${chipStyle("cerda")}" onclick="setAnimalFilter('cerda')">Cerdas (${state.animals.filter(a=>a.type==="cerda"&&a.status==="activo").length})</button>
+      <button class="chip" style="${chipStyle("barraco")}" onclick="setAnimalFilter('barraco')">Barracos (${state.animals.filter(a=>a.type==="barraco"&&a.status==="activo").length})</button>
+      <button class="chip" style="${chipStyle("inactivo")}" onclick="setAnimalFilter('inactivo')">Inactivos</button>
+    </div>
+    ${list.length===0 ? `
+    <div class="card" style="text-align:center;padding:50px">
+      <div style="font-size:48px;margin-bottom:10px">🐷</div>
+      <div style="font-weight:600;color:#9E7A65">Sin animales registrados</div>
+      <div style="font-size:13px;color:#9E7A65;margin-top:4px">Toca "+ Agregar" para comenzar</div>
+    </div>` : `
+    <div class="card" style="padding:4px 16px">
+      ${list.map(a => {
+        const ap = state.partos.filter(p=>p.sowId===a.id);
+        const born = ap.reduce((s,p)=>s+Number(p.pigletsAlive||0),0);
+        return `
+        <div class="row">
+          <div class="ava" style="background:${a.type==="cerda"?"#FFE4CC":"#E0ECF8"}">${a.type==="cerda"?"🐷":"🐗"}</div>
+          <div style="flex:1;cursor:pointer" onclick="openAnimalModal('${esc(a.id)}')">
+            <div style="font-weight:600;font-size:14px">${esc(a.name||a.tag||"Sin nombre")}</div>
+            <div style="font-size:11px;color:#9E7A65">${a.tag?"#"+esc(a.tag)+" · ":""}${esc(a.breed)}${a.type==="cerda"&&ap.length>0?" · "+ap.length+" partos · "+born+" vivos":""}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:5px">
+            <span class="badge" style="background:${a.status==="activo"?"#DCFCE7":"#F5F5F5"};color:${a.status==="activo"?"#3D7A52":"#9E7A65"}">${a.status}</span>
+            <button class="btn bd" onclick="deleteAnimal('${esc(a.id)}')">✕</button>
+          </div>
+        </div>`;
+      }).join("")}
+    </div>`}
+  </div>`;
+}
+
+function setAnimalFilter(f) { animalFilter = f; renderApp(); }
+
+function deleteAnimal(id) {
+  if (!confirm("¿Eliminar este animal?")) return;
+  state.animals = state.animals.filter(a=>a.id!==id);
+  saveState(); renderApp(); showToast("Animal eliminado");
+}
+
+function openAnimalModal(id) {
+  const a = id ? state.animals.find(x=>x.id===id) : {id:"",tag:"",name:"",type:"cerda",breed:"Mestizo",birthDate:"",entryDate:today(),weight:"",status:"activo",notes:""};
+  if (!a) return;
+  const title = id ? "Editar Animal" : "Nuevo Animal";
+  document.getElementById("modal-container").innerHTML = `
+  <div class="overlay" onclick="closeModal(event)">
+    <div class="sheet" onclick="event.stopPropagation()">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+        <h3 style="font-family:Sora,sans-serif;font-size:17px;font-weight:700">${title}</h3>
+        <button onclick="closeModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#9E7A65">✕</button>
+      </div>
+      <div class="form-grid">
+        <div>
+          <label class="lbl">Tipo de animal</label>
+          <div style="display:flex;gap:8px">
+            <button id="btn-cerda" class="btn ${a.type==="cerda"?"bp":"bs"}" style="flex:1" onclick="selectAnimalType('cerda')">🐷 Cerda</button>
+            <button id="btn-barraco" class="btn ${a.type==="barraco"?"bp":"bs"}" style="flex:1" onclick="selectAnimalType('barraco')">🐗 Barraco</button>
+          </div>
+          <input type="hidden" id="f-type" value="${a.type}">
+        </div>
+        <div class="g2">
+          <div><label class="lbl">Arete / Código</label><input id="f-tag" value="${esc(a.tag)}" placeholder="Ej: A-001"></div>
+          <div><label class="lbl">Nombre</label><input id="f-name" value="${esc(a.name)}" placeholder="Ej: Manchas"></div>
+        </div>
+        <div>
+          <label class="lbl">Raza</label>
+          <select id="f-breed">
+            ${["Landrace","Yorkshire","Duroc","Hampshire","Pietrain","Mestizo","Otro"].map(b=>`<option ${a.breed===b?"selected":""}>${b}</option>`).join("")}
+          </select>
+        </div>
+        <div class="g2">
+          <div><label class="lbl">Fecha de nacimiento</label><input type="date" id="f-bdate" value="${a.birthDate||""}"></div>
+          <div><label class="lbl">Fecha de ingreso</label><input type="date" id="f-edate" value="${a.entryDate||""}"></div>
+        </div>
+        <div class="g2">
+          <div><label class="lbl">Peso (kg)</label><input type="number" id="f-weight" value="${a.weight||""}" min="0" placeholder="0"></div>
+          <div>
+            <label class="lbl">Estado</label>
+            <select id="f-status">
+              ${["activo","inactivo","vendido","muerto"].map(s=>`<option ${a.status===s?"selected":""}>${s}</option>`).join("")}
+            </select>
+          </div>
+        </div>
+        <div><label class="lbl">Notas</label><textarea id="f-notes" placeholder="Observaciones...">${esc(a.notes||"")}</textarea></div>
+        <button class="btn bp" style="width:100%;margin-top:4px" onclick="saveAnimal('${esc(id||"")}')">
+          ${id ? "Guardar cambios" : "Registrar animal"}
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function selectAnimalType(type) {
+  document.getElementById("f-type").value = type;
+  document.getElementById("btn-cerda").className  = "btn " + (type==="cerda"  ?"bp":"bs");
+  document.getElementById("btn-barraco").className = "btn " + (type==="barraco"?"bp":"bs");
+}
+
+function saveAnimal(id) {
+  const tag   = document.getElementById("f-tag").value.trim();
+  const name  = document.getElementById("f-name").value.trim();
+  if (!tag && !name) { showToast("Ingrese arete o nombre","err"); return; }
+  const animal = {
+    id: id || genId(),
+    type:      document.getElementById("f-type").value,
+    tag, name,
+    breed:     document.getElementById("f-breed").value,
+    birthDate: document.getElementById("f-bdate").value,
+    entryDate: document.getElementById("f-edate").value,
+    weight:    document.getElementById("f-weight").value,
+    status:    document.getElementById("f-status").value,
+    notes:     document.getElementById("f-notes").value,
+  };
+  if (id) {
+    state.animals = state.animals.map(a=>a.id===id?animal:a);
+    showToast("Animal actualizado");
+  } else {
+    state.animals.push(animal);
+    showToast("Animal registrado");
+  }
+  saveState(); closeModal(); renderApp();
+}
+
+// ═══════════════════════════════════════════════
+//  PARTOS / REPRODUCCIÓN
+// ═══════════════════════════════════════════════
+let partoFilter = "todos";
+
+const SI = {
+  servicio: {lbl:"Servicio", bg:"#E0F2FE", c:"#1E6FA0", icon:"💉"},
+  gestacion:{lbl:"Gestación",bg:"#FFF3CD", c:"#8B6000", icon:"🤰"},
+  parto:    {lbl:"Parto",    bg:"#DCFCE7", c:"#3D7A52", icon:"🐣"},
+  destete:  {lbl:"Destete",  bg:"#F0F9FF", c:"#0369A1", icon:"✅"},
+  cancelado:{lbl:"Cancelado",bg:"#FEE2E2", c:"#C23232", icon:"❌"},
+};
+
+function renderPartos() {
+  const list = state.partos.filter(p=>partoFilter==="todos"||p.status===partoFilter);
+  const sorted = [...list].sort((a,b)=>new Date(b.serviceDate||0)-new Date(a.serviceDate||0));
+  const chipS = (id) => `background:${partoFilter===id?"#B84400":"#F5EDE4"};color:${partoFilter===id?"#fff":"#6B4D38"}`;
+
+  return `<div class="page">
+    <div class="sec-hd">
+      <h2 style="font-family:Sora,sans-serif;font-size:20px;font-weight:800">🐣 Control Reproductivo</h2>
+      <button class="btn bp bsm" onclick="openPartoModal()">+ Nuevo</button>
+    </div>
+    <div class="filters">
+      <button class="chip" style="${chipS("todos")}"    onclick="setPartoFilter('todos')">Todos (${state.partos.length})</button>
+      <button class="chip" style="${chipS("gestacion")}" onclick="setPartoFilter('gestacion')">Gestando (${state.partos.filter(p=>p.status==="gestacion").length})</button>
+      <button class="chip" style="${chipS("parto")}"    onclick="setPartoFilter('parto')">Partos (${state.partos.filter(p=>p.status==="parto").length})</button>
+      <button class="chip" style="${chipS("destete")}"  onclick="setPartoFilter('destete')">Destete</button>
+    </div>
+    ${sorted.length===0 ? `
+    <div class="card" style="text-align:center;padding:50px">
+      <div style="font-size:48px;margin-bottom:10px">🐣</div>
+      <div style="font-weight:600;color:#9E7A65">Sin registros reproductivos</div>
+    </div>` :
+    sorted.map(p => {
+      const sow  = state.animals.find(a=>a.id===p.sowId);
+      const boar = state.animals.find(a=>a.id===p.boarId);
+      const si   = SI[p.status]||SI.servicio;
+      return `
+      <div class="card" style="cursor:pointer" onclick="openPartoModal('${esc(p.id)}')">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+          <div>
+            <div style="font-weight:700;font-size:15px">${esc(sow?.name||sow?.tag||"Cerda desconocida")}</div>
+            ${boar ? `<div style="font-size:11px;color:#9E7A65">Barraco: ${esc(boar.name||boar.tag)}</div>` : ""}
+            <div style="font-size:11px;color:#9E7A65">Servicio: ${fmtDate(p.serviceDate)}</div>
+          </div>
+          <span class="badge" style="background:${si.bg};color:${si.c}">${si.icon} ${si.lbl}</span>
+        </div>
+        <div class="g3">
+          ${p.status==="gestacion" ? `
+            <div style="background:#FFF3CD;border-radius:8px;padding:8px;text-align:center">
+              <div style="font-size:10px;color:#9E7A65">Parto esperado</div>
+              <div style="font-size:12px;font-weight:700;color:#8B6000">${fmtDate(p.expectedBirthDate)}</div>
+              <div style="font-size:10px;font-weight:700;color:${(daysUntil(p.expectedBirthDate)||99)<=3?"#C23232":"#8B6000"}">
+                ${daysUntil(p.expectedBirthDate)===null?"":daysUntil(p.expectedBirthDate)<=0?"¡HOY!":daysUntil(p.expectedBirthDate)+"d"}
+              </div>
+            </div>` : ""}
+          ${(p.status==="parto"||p.status==="destete") ? `
+            <div style="background:#DCFCE7;border-radius:8px;padding:8px;text-align:center">
+              <div style="font-size:10px;color:#9E7A65">Vivos</div>
+              <div style="font-size:22px;font-weight:800;color:#3D7A52">${p.pigletsAlive||0}</div>
+            </div>
+            <div style="background:#FEE2E2;border-radius:8px;padding:8px;text-align:center">
+              <div style="font-size:10px;color:#9E7A65">Muertos</div>
+              <div style="font-size:22px;font-weight:800;color:#C23232">${p.pigletsDead||0}</div>
+            </div>` : ""}
+          ${p.status==="destete" ? `
+            <div style="background:#E0F2FE;border-radius:8px;padding:8px;text-align:center">
+              <div style="font-size:10px;color:#9E7A65">Destetados</div>
+              <div style="font-size:22px;font-weight:800;color:#1E6FA0">${p.pigletsWeaned||0}</div>
+            </div>` : ""}
+        </div>
+        <button class="btn bd" style="width:100%;margin-top:10px" onclick="event.stopPropagation();deleteParto('${esc(p.id)}')">Eliminar registro</button>
+      </div>`;
+    }).join("")
+    }
+  </div>`;
+}
+
+function setPartoFilter(f) { partoFilter = f; renderApp(); }
+
+function deleteParto(id) {
+  if (!confirm("¿Eliminar este registro?")) return;
+  state.partos = state.partos.filter(p=>p.id!==id);
+  saveState(); renderApp(); showToast("Registro eliminado");
+}
+
+function openPartoModal(id) {
+  const sows  = state.animals.filter(a=>a.type==="cerda"&&a.status==="activo");
+  const boars = state.animals.filter(a=>a.type==="barraco"&&a.status==="activo");
+  const p = id ? state.partos.find(x=>x.id===id) :
+    {id:"",sowId:"",boarId:"",serviceDate:today(),expectedBirthDate:"",birthDate:"",status:"servicio",pigletsAlive:0,pigletsDead:0,pigletsWeaned:0,weaningDate:"",salePrice:0,notes:""};
+  if (!p) return;
+
+  const statusBtns = Object.entries(SI).map(([k,v])=>`
+    <button id="sbtn-${k}" class="chip" style="background:${p.status===k?v.c:"#F5EDE4"};color:${p.status===k?"#fff":v.c};border:1px solid ${v.c}"
+      onclick="selectPartoStatus('${k}')">${v.icon} ${v.lbl}</button>`).join("");
+
+  const extraFields = () => {
+    let html = "";
+    if (["parto","destete"].includes(p.status)) {
+      html += `
+        <div><label class="lbl">Fecha de parto</label><input type="date" id="f-bdate" value="${p.birthDate||""}"></div>
+        <div class="g2">
+          <div><label class="lbl">Lechones vivos</label><input type="number" id="f-alive" value="${p.pigletsAlive||0}" min="0"></div>
+          <div><label class="lbl">Lechones muertos</label><input type="number" id="f-dead" value="${p.pigletsDead||0}" min="0"></div>
+        </div>`;
+    }
+    if (p.status==="destete") {
+      html += `
+        <div class="g2">
+          <div><label class="lbl">Destetados</label><input type="number" id="f-weaned" value="${p.pigletsWeaned||0}" min="0"></div>
+          <div><label class="lbl">Fecha destete</label><input type="date" id="f-wdate" value="${p.weaningDate||""}"></div>
+        </div>
+        <div><label class="lbl">Precio x lechón</label><input type="number" id="f-price" value="${p.salePrice||0}" min="0"></div>`;
+    }
+    return html;
+  };
+
+  document.getElementById("modal-container").innerHTML = `
+  <div class="overlay" onclick="closeModal(event)">
+    <div class="sheet" onclick="event.stopPropagation()">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+        <h3 style="font-family:Sora,sans-serif;font-size:17px;font-weight:700">${id?"Editar":"Nuevo"} Registro</h3>
+        <button onclick="closeModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#9E7A65">✕</button>
+      </div>
+      <div class="form-grid">
+        <div>
+          <label class="lbl">Estado del evento</label>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">${statusBtns}</div>
+          <input type="hidden" id="f-status" value="${p.status}">
+        </div>
+        <div>
+          <label class="lbl">Cerda *</label>
+          <select id="f-sowId">
+            <option value="">-- Seleccionar cerda --</option>
+            ${sows.map(s=>`<option value="${s.id}" ${p.sowId===s.id?"selected":""}>${esc(s.name||s.tag)}</option>`).join("")}
+          </select>
+        </div>
+        <div>
+          <label class="lbl">Barraco</label>
+          <select id="f-boarId">
+            <option value="">-- Ninguno --</option>
+            ${boars.map(b=>`<option value="${b.id}" ${p.boarId===b.id?"selected":""}>${esc(b.name||b.tag)}</option>`).join("")}
+          </select>
+        </div>
+        <div class="g2">
+          <div><label class="lbl">Fecha de servicio</label>
+            <input type="date" id="f-sdate" value="${p.serviceDate||""}" oninput="autoCalcBirth(this.value)">
+          </div>
+          <div><label class="lbl">Parto esperado (114d)</label>
+            <input type="date" id="f-expdate" value="${p.expectedBirthDate||""}">
+          </div>
+        </div>
+        <div id="extra-fields">${extraFields()}</div>
+        <div><label class="lbl">Notas</label><textarea id="f-notes" placeholder="Observaciones...">${esc(p.notes||"")}</textarea></div>
+        <button class="btn bp" style="width:100%" onclick="saveParto('${esc(id||"")}')">
+          ${id?"Guardar cambios":"Registrar"}
+        </button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function autoCalcBirth(sdate) {
+  if (!sdate) return;
+  const exp = addDays(sdate, 114);
+  const el = document.getElementById("f-expdate");
+  if (el && !el.value) el.value = exp;
+}
+
+function selectPartoStatus(status) {
+  document.getElementById("f-status").value = status;
+  Object.keys(SI).forEach(k => {
+    const btn = document.getElementById("sbtn-"+k);
+    if (btn) {
+      btn.style.background = k===status ? SI[k].c : "#F5EDE4";
+      btn.style.color      = k===status ? "#fff" : SI[k].c;
+    }
+  });
+  // Re-render extra fields basándose en nuevo status
+  const extra = document.getElementById("extra-fields");
+  if (!extra) return;
+  let html = "";
+  if (["parto","destete"].includes(status)) {
+    html += `
+      <div><label class="lbl">Fecha de parto</label><input type="date" id="f-bdate" value=""></div>
+      <div class="g2">
+        <div><label class="lbl">Lechones vivos</label><input type="number" id="f-alive" value="0" min="0"></div>
+        <div><label class="lbl">Lechones muertos</label><input type="number" id="f-dead" value="0" min="0"></div>
+      </div>`;
+  }
+  if (status==="destete") {
+    html += `
+      <div class="g2">
+        <div><label class="lbl">Destetados</label><input type="number" id="f-weaned" value="0" min="0"></div>
+        <div><label class="lbl">Fecha destete</label><input type="date" id="f-wdate" value=""></div>
+      </div>
+      <div><label class="lbl">Precio x lechón</label><input type="number" id="f-price" value="0" min="0"></div>`;
+  }
+  extra.innerHTML = html;
+}
+
+function saveParto(id) {
+  const sowId = document.getElementById("f-sowId").value;
+  if (!sowId) { showToast("Seleccione una cerda","err"); return; }
+  const status    = document.getElementById("f-status").value;
+  const sdate     = document.getElementById("f-sdate").value;
+  const expdate   = document.getElementById("f-expdate").value;
+  const bdate     = document.getElementById("f-bdate")?.value || "";
+  const alive     = Number(document.getElementById("f-alive")?.value)||0;
+  const dead      = Number(document.getElementById("f-dead")?.value)||0;
+  const weaned    = Number(document.getElementById("f-weaned")?.value)||0;
+  const wdate     = document.getElementById("f-wdate")?.value || "";
+  const price     = Number(document.getElementById("f-price")?.value)||0;
+  const boarId    = document.getElementById("f-boarId").value;
+  const notes     = document.getElementById("f-notes").value;
+
+  const rec = {
+    id: id || genId(),
+    sowId, boarId, serviceDate:sdate, status,
+    expectedBirthDate: expdate || (sdate ? addDays(sdate,114) : ""),
+    birthDate: bdate,
+    pigletsAlive: alive, pigletsDead: dead, pigletsBorn: alive+dead,
+    pigletsWeaned: weaned, weaningDate: wdate, salePrice: price, notes
+  };
+  if (id) {
+    state.partos = state.partos.map(p=>p.id===id?rec:p);
+    showToast("Registro actualizado");
+  } else {
+    state.partos.push(rec);
+    showToast("Registro creado");
+  }
+  saveState(); closeModal(); renderApp();
+}
+
+// ═══════════════════════════════════════════════
+//  FINANZAS
+// ═══════════════════════════════════════════════
+let finTab = "resumen";
+
+function renderFinanzas() {
+  const m = getMetrics();
+  const CATS = ["Alimento","Medicamento","Vacunas","Equipo","Instalaciones","Mano de obra","Otro"];
+  const expByCat = CATS.map(c=>({name:c, total:state.expenses.filter(e=>e.category===c).reduce((s,e)=>s+Number(e.amount||0),0)})).filter(x=>x.total>0);
+  const tabS = (id) => `background:${finTab===id?"#B84400":"#F5EDE4"};color:${finTab===id?"#fff":"#6B4D38"}`;
+
+  return `<div class="page">
+    <div class="sec-hd">
+      <h2 style="font-family:Sora,sans-serif;font-size:20px;font-weight:800">💰 Finanzas</h2>
+      <div style="display:flex;gap:8px">
+        <button class="btn bs bsm" onclick="openExpenseModal()">+ Gasto</button>
+        <button class="btn bp bsm" onclick="openSaleModal()">+ Venta</button>
+      </div>
+    </div>
+
+    <div style="background:linear-gradient(135deg,#B84400,#E8642A);border-radius:18px;padding:20px;margin-bottom:14px;color:#fff">
+      <div style="font-size:12px;opacity:.8">Ganancia neta total</div>
+      <div style="font-family:Sora,sans-serif;font-size:30px;font-weight:800">${fmt(m.profit)}</div>
+      <div style="display:flex;gap:22px;margin-top:12px">
+        <div><div style="font-size:10px;opacity:.75">Ingresos</div><div style="font-size:15px;font-weight:700">+${fmt(m.rev)}</div></div>
+        <div><div style="font-size:10px;opacity:.75">Gastos</div><div style="font-size:15px;font-weight:700">-${fmt(m.exp)}</div></div>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <button class="chip" style="${tabS("resumen")};flex:1;justify-content:center" onclick="setFinTab('resumen')">Resumen</button>
+      <button class="chip" style="${tabS("gastos")};flex:1;justify-content:center"  onclick="setFinTab('gastos')">Gastos</button>
+      <button class="chip" style="${tabS("ventas")};flex:1;justify-content:center"  onclick="setFinTab('ventas')">Ventas</button>
+    </div>
+
+    ${finTab==="resumen" ? `
+      <div class="card">
+        <div style="font-weight:700;font-size:14px;margin-bottom:12px">Gastos por categoría</div>
+        ${expByCat.length===0 ? `<div style="color:#9E7A65;font-size:13px">Sin gastos aún</div>` :
+          expByCat.sort((a,b)=>b.total-a.total).map(c=>`
+          <div style="margin-bottom:10px">
+            <div style="display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px">
+              <span style="color:#6B4D38;font-weight:500">${c.name}</span>
+              <span style="font-weight:600">${fmt(c.total)}</span>
+            </div>
+            <div style="background:#F5EDE4;height:6px;border-radius:3px">
+              <div style="background:#B84400;height:100%;border-radius:3px;width:${m.exp>0?(c.total/m.exp*100):0}%"></div>
+            </div>
+          </div>`).join("")}
+      </div>
+      <div class="card">
+        <div style="font-weight:700;font-size:14px;margin-bottom:12px">Producción</div>
+        <div class="g2">
+          <div style="background:#E0F2FE;border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;color:#1E6FA0">Lechones vendidos</div>
+            <div style="font-weight:800;font-size:22px;color:#1E6FA0">${state.sales.reduce((s,x)=>s+Number(x.quantity||0),0)}</div>
+          </div>
+          <div style="background:#DCFCE7;border-radius:10px;padding:10px;text-align:center">
+            <div style="font-size:11px;color:#3D7A52">Total partos</div>
+            <div style="font-weight:800;font-size:22px;color:#3D7A52">${state.partos.filter(p=>p.status==="parto"||p.status==="destete").length}</div>
+          </div>
+        </div>
+      </div>` : ""}
+
+    ${finTab==="gastos" ? `
+      <div class="card" style="padding:4px 16px">
+        ${state.expenses.length===0 ? `<div style="padding:40px;text-align:center;color:#9E7A65">Sin gastos registrados</div>` :
+          [...state.expenses].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).map(e=>`
+          <div class="row">
+            <div class="ava" style="background:#FEE2E2">📋</div>
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:13px">${esc(e.description||e.category)}</div>
+              <div style="font-size:11px;color:#9E7A65">${esc(e.category)} · ${fmtDate(e.date)}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+              <span style="font-weight:700;color:#C23232;font-size:14px">${fmt(e.amount)}</span>
+              <button class="btn bd" onclick="deleteExpense('${esc(e.id)}')">✕</button>
+            </div>
+          </div>`).join("")}
+      </div>` : ""}
+
+    ${finTab==="ventas" ? `
+      <div class="card" style="padding:4px 16px">
+        ${state.sales.length===0 ? `<div style="padding:40px;text-align:center;color:#9E7A65">Sin ventas registradas</div>` :
+          [...state.sales].sort((a,b)=>new Date(b.date||0)-new Date(a.date||0)).map(x=>`
+          <div class="row">
+            <div class="ava" style="background:#DCFCE7">🐽</div>
+            <div style="flex:1">
+              <div style="font-weight:600;font-size:13px">${x.quantity} lechones${x.buyerName?" → "+esc(x.buyerName):""}</div>
+              <div style="font-size:11px;color:#9E7A65">${fmt(x.pricePerHead)}/ud · ${fmtDate(x.date)}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+              <span style="font-weight:700;color:#3D7A52;font-size:14px">${fmt(Number(x.pricePerHead||0)*Number(x.quantity||0))}</span>
+              <button class="btn bd" onclick="deleteSale('${esc(x.id)}')">✕</button>
+            </div>
+          </div>`).join("")}
+      </div>` : ""}
+  </div>`;
+}
+
+function setFinTab(t) { finTab = t; renderApp(); }
+function deleteExpense(id) { state.expenses=state.expenses.filter(e=>e.id!==id); saveState(); renderApp(); showToast("Gasto eliminado"); }
+function deleteSale(id)    { state.sales=state.sales.filter(s=>s.id!==id); saveState(); renderApp(); showToast("Venta eliminada"); }
+
+function openExpenseModal() {
+  const CATS = ["Alimento","Medicamento","Vacunas","Equipo","Instalaciones","Mano de obra","Otro"];
+  document.getElementById("modal-container").innerHTML = `
+  <div class="overlay" onclick="closeModal(event)">
+    <div class="sheet" onclick="event.stopPropagation()">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+        <h3 style="font-family:Sora,sans-serif;font-size:17px;font-weight:700">Registrar Gasto</h3>
+        <button onclick="closeModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#9E7A65">✕</button>
+      </div>
+      <div class="form-grid">
+        <div class="g2">
+          <div><label class="lbl">Fecha *</label><input type="date" id="f-date" value="${today()}"></div>
+          <div><label class="lbl">Monto *</label><input type="number" id="f-amount" placeholder="0" min="0"></div>
+        </div>
+        <div><label class="lbl">Categoría</label>
+          <select id="f-cat">${CATS.map(c=>`<option>${c}</option>`).join("")}</select>
+        </div>
+        <div><label class="lbl">Descripción</label><input id="f-desc" placeholder="Ej: Concentrado 50kg"></div>
+        <div><label class="lbl">Animal relacionado (opcional)</label>
+          <select id="f-animal">
+            <option value="">-- General --</option>
+            ${state.animals.filter(a=>a.status==="activo").map(a=>`<option value="${a.id}">${esc(a.name||a.tag)}</option>`).join("")}
+          </select>
+        </div>
+        <button class="btn bp" style="width:100%" onclick="saveExpense()">Registrar gasto</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function saveExpense() {
+  const amount = document.getElementById("f-amount").value;
+  const date   = document.getElementById("f-date").value;
+  if (!amount || !date) { showToast("Complete fecha y monto","err"); return; }
+  state.expenses.push({id:genId(), date, category:document.getElementById("f-cat").value, description:document.getElementById("f-desc").value, amount:Number(amount), animalId:document.getElementById("f-animal").value});
+  saveState(); closeModal(); renderApp(); showToast("Gasto registrado");
+}
+
+function openSaleModal() {
+  document.getElementById("modal-container").innerHTML = `
+  <div class="overlay" onclick="closeModal(event)">
+    <div class="sheet" onclick="event.stopPropagation()">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px">
+        <h3 style="font-family:Sora,sans-serif;font-size:17px;font-weight:700">Registrar Venta</h3>
+        <button onclick="closeModal()" style="background:none;border:none;font-size:22px;cursor:pointer;color:#9E7A65">✕</button>
+      </div>
+      <div class="form-grid">
+        <div><label class="lbl">Fecha *</label><input type="date" id="f-date" value="${today()}"></div>
+        <div class="g2">
+          <div><label class="lbl">Cantidad *</label><input type="number" id="f-qty" placeholder="0" min="0" oninput="updateSaleTotal()"></div>
+          <div><label class="lbl">Precio x lechón *</label><input type="number" id="f-price" placeholder="0" min="0" oninput="updateSaleTotal()"></div>
+        </div>
+        <div id="sale-total" style="background:#DCFCE7;border-radius:10px;padding:12px;text-align:center">
+          <div style="font-size:12px;color:#3D7A52">Total de venta</div>
+          <div style="font-family:Sora,sans-serif;font-size:22px;font-weight:800;color:#3D7A52" id="sale-total-val">${fmt(0)}</div>
+        </div>
+        <div><label class="lbl">Nombre del comprador</label><input id="f-buyer" placeholder="Ej: Carnicería Don Juan"></div>
+        <div><label class="lbl">Notas</label><textarea id="f-notes" placeholder="Observaciones..."></textarea></div>
+        <button class="btn bp" style="width:100%" onclick="saveSale()">Registrar venta</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+function updateSaleTotal() {
+  const qty = Number(document.getElementById("f-qty")?.value)||0;
+  const price = Number(document.getElementById("f-price")?.value)||0;
+  const el = document.getElementById("sale-total-val");
+  if (el) el.textContent = fmt(qty * price);
+}
+
+function saveSale() {
+  const qty   = document.getElementById("f-qty").value;
+  const price = document.getElementById("f-price").value;
+  const date  = document.getElementById("f-date").value;
+  if (!qty || !price || !date) { showToast("Complete los campos requeridos","err"); return; }
+  state.sales.push({id:genId(), date, quantity:Number(qty), pricePerHead:Number(price), buyerName:document.getElementById("f-buyer").value, notes:document.getElementById("f-notes").value});
+  saveState(); closeModal(); renderApp(); showToast("Venta registrada");
+}
+
+// ═══════════════════════════════════════════════
+//  ANÁLISIS
+// ═══════════════════════════════════════════════
+function renderAnalisis() {
+  const m = getMetrics();
+  const sows = state.animals.filter(a=>a.type==="cerda");
+
+  // Datos mensuales
+  const mSales={}, mExp={}, mPig={};
+  state.sales.forEach(x=>{ const mo=x.date?.slice(0,7); if(mo) mSales[mo]=(mSales[mo]||0)+Number(x.pricePerHead||0)*Number(x.quantity||0); });
+  state.expenses.forEach(x=>{ const mo=x.date?.slice(0,7); if(mo) mExp[mo]=(mExp[mo]||0)+Number(x.amount||0); });
+  state.partos.filter(p=>p.birthDate&&(p.status==="parto"||p.status==="destete")).forEach(p=>{
+    const mo=p.birthDate.slice(0,7);
+    mPig[mo]=mPig[mo]||{v:0,d:0};
+    mPig[mo].v+=Number(p.pigletsAlive||0);
+    mPig[mo].d+=Number(p.pigletsDead||0);
+  });
+  const months=[...new Set([...Object.keys(mSales),...Object.keys(mExp)])].sort().slice(-12);
+
+  // Rentabilidad por cerda
+  const perSow = sows.map(sow=>{
+    const ap=state.partos.filter(p=>p.sowId===sow.id);
+    const rev=ap.reduce((s,p)=>s+Number(p.pigletsWeaned||0)*Number(p.salePrice||0),0);
+    const expShare=sows.length>0?state.expenses.reduce((s,e)=>s+Number(e.amount||0),0)/sows.length:0;
+    return {name:sow.name||sow.tag||"Sin nombre", partos:ap.length, alive:ap.reduce((s,p)=>s+Number(p.pigletsAlive||0),0), weaned:ap.reduce((s,p)=>s+Number(p.pigletsWeaned||0),0), rev, exp:Math.round(expShare), profit:Math.round(rev-expShare)};
+  }).sort((a,b)=>b.profit-a.profit);
+
+  // Generar barras SVG
+  const maxVal = months.length>0 ? Math.max(...months.map(mo=>Math.max(mSales[mo]||0, mExp[mo]||0)), 1) : 1;
+  const barH = 120;
+  const barW = months.length>0 ? Math.min(24, Math.floor(280/months.length/2)-2) : 10;
+  const gap  = months.length>0 ? Math.floor(280/months.length) : 28;
+
+  const svgBars = months.map((mo,i) => {
+    const inc = mSales[mo]||0;
+    const gas = mExp[mo]||0;
+    const hInc = Math.round((inc/maxVal)*barH);
+    const hGas = Math.round((gas/maxVal)*barH);
+    const x = 10 + i*gap;
+    return `
+      <rect x="${x}" y="${barH-hInc}" width="${barW}" height="${hInc}" fill="#3D7A52" rx="3"/>
+      <rect x="${x+barW+2}" y="${barH-hGas}" width="${barW}" height="${hGas}" fill="#C23232" rx="3"/>
+      <text x="${x+barW}" y="${barH+14}" text-anchor="middle" font-size="8" fill="#9E7A65">${mo.slice(5)}</text>`;
+  }).join("");
+
+  // SVG lechones
+  const pigMonths = Object.keys(mPig).sort().slice(-10);
+  const maxPig = pigMonths.length>0 ? Math.max(...pigMonths.map(mo=>mPig[mo].v+mPig[mo].d),1) : 1;
+  const pgap = pigMonths.length>0 ? Math.floor(290/pigMonths.length) : 28;
+  const svgPig = pigMonths.map((mo,i)=>{
+    const vivos = mPig[mo].v, muertos = mPig[mo].d;
+    const hv = Math.round((vivos/maxPig)*100);
+    const hm = Math.round((muertos/maxPig)*100);
+    const x = 10 + i*pgap;
+    const bw = Math.min(20, Math.floor(pgap)-4);
+    return `
+      <rect x="${x}" y="${100-hv-hm}" width="${bw}" height="${hm}" fill="#FCA5A5" rx="3"/>
+      <rect x="${x}" y="${100-hv}" width="${bw}" height="${hv}" fill="#3D7A52" rx="3"/>
+      <text x="${x+bw/2}" y="114" text-anchor="middle" font-size="8" fill="#9E7A65">${mo.slice(5)}</text>`;
+  }).join("");
+
+  return `<div class="page">
+    <h2 style="font-family:Sora,sans-serif;font-size:20px;font-weight:800;margin-bottom:18px">📈 Análisis y Gráficos</h2>
+
+    <!-- KPIs -->
+    <div class="kpi-grid" style="margin-bottom:14px">
+      <div class="kpi"><div class="kpi-val" style="color:#B84400">${m.sows}</div><div class="kpi-lbl">Cerdas activas</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#3D7A52">${m.live}</div><div class="kpi-lbl">Lechones nacidos vivos</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#C23232">${m.dead}</div><div class="kpi-lbl">Lechones muertos</div></div>
+      <div class="kpi"><div class="kpi-val" style="color:#0369A1">${m.weaned}</div><div class="kpi-lbl">Destetados</div></div>
+    </div>
+
+    <!-- Gráfico ingresos vs gastos -->
+    ${months.length>0 ? `
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:12px">📊 Ingresos vs Gastos mensuales</div>
+      <div style="display:flex;gap:12px;margin-bottom:8px;font-size:11px">
+        <span><span style="color:#3D7A52">■</span> Ingresos</span>
+        <span><span style="color:#C23232">■</span> Gastos</span>
+      </div>
+      <svg width="100%" viewBox="0 0 300 140" style="overflow:visible">
+        ${svgBars}
+        <line x1="10" y1="${barH}" x2="290" y2="${barH}" stroke="#F0E6DC" stroke-width="1"/>
+      </svg>
+    </div>` : `<div class="card" style="text-align:center;padding:30px;color:#9E7A65">Registra gastos y ventas para ver el gráfico</div>`}
+
+    <!-- Gráfico lechones -->
+    ${pigMonths.length>0 ? `
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:12px">🐽 Lechones nacidos por mes</div>
+      <div style="display:flex;gap:12px;margin-bottom:8px;font-size:11px">
+        <span><span style="color:#3D7A52">■</span> Vivos</span>
+        <span><span style="color:#FCA5A5">■</span> Muertos</span>
+      </div>
+      <svg width="100%" viewBox="0 0 300 120" style="overflow:visible">
+        ${svgPig}
+        <line x1="10" y1="100" x2="290" y2="100" stroke="#F0E6DC" stroke-width="1"/>
+      </svg>
+    </div>` : ""}
+
+    <!-- Rentabilidad por cerda -->
+    ${perSow.length>0 ? `
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:12px">🐷 Rentabilidad por cerda</div>
+      ${perSow.map((sw,i)=>`
+        <div style="margin-bottom:12px;padding-bottom:12px;border-bottom:${i<perSow.length-1?"1px solid #F0E6DC":"none"}">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px">
+            <div>
+              <span style="font-weight:600;font-size:14px">${esc(sw.name)}</span>
+              <div style="font-size:11px;color:#9E7A65">${sw.partos} partos · ${sw.alive} vivos · ${sw.weaned} destetados</div>
+            </div>
+            <span style="font-weight:800;color:${sw.profit>=0?"#3D7A52":"#C23232"};font-size:15px">${fmt(sw.profit)}</span>
+          </div>
+          <div class="g3">
+            <div style="background:#DCFCE7;border-radius:8px;padding:7px;text-align:center">
+              <div style="font-size:10px;color:#3D7A52">Ingresos</div>
+              <div style="font-weight:700;color:#3D7A52;font-size:12px">${fmt(sw.rev)}</div>
+            </div>
+            <div style="background:#FEE2E2;border-radius:8px;padding:7px;text-align:center">
+              <div style="font-size:10px;color:#C23232">Gastos (p.)</div>
+              <div style="font-weight:700;color:#C23232;font-size:12px">${fmt(sw.exp)}</div>
+            </div>
+            <div style="background:#E0F2FE;border-radius:8px;padding:7px;text-align:center">
+              <div style="font-size:10px;color:#1E6FA0">Destetados</div>
+              <div style="font-weight:700;color:#1E6FA0;font-size:12px">${sw.weaned}</div>
+            </div>
+          </div>
+        </div>`).join("")}
+    </div>` : ""}
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════
+//  CONFIGURACIÓN
+// ═══════════════════════════════════════════════
+function renderConfig() {
+  const alerts = getAlerts();
+  const m = getMetrics();
+
+  return `<div class="page">
+    <h2 style="font-family:Sora,sans-serif;font-size:20px;font-weight:800;margin-bottom:18px">⚙️ Configuración</h2>
+
+    ${alerts.length>0 ? `
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:10px">🔔 Alertas activas (${alerts.length})</div>
+      ${alerts.map(a=>`
+        <div class="row">
+          <div class="ava" style="background:${a.sev==="h"?"#FEE2E2":a.sev==="m"?"#FFF3CD":"#DCFCE7"}">${a.type==="parto"?"🤰":"🐽"}</div>
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:13px">${esc(a.msg)}</div>
+            <div style="font-size:11px;color:#9E7A65">${fmtDate(a.date)}</div>
+          </div>
+          <span class="badge" style="background:${a.days<=0?"#FEE2E2":a.days<=3?"#FFF3CD":"#DCFCE7"};color:${a.days<=0?"#C23232":a.days<=3?"#8B6000":"#3D7A52"};font-weight:700">
+            ${a.days<=0?"HOY":a.days+"d"}
+          </span>
+        </div>`).join("")}
+    </div>` : ""}
+
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:14px">🏠 Datos de la granja</div>
+      <div class="form-grid">
+        <div><label class="lbl">Nombre de la porqueriza</label>
+          <input id="cfg-name" value="${esc(state.settings.farmName)}" placeholder="Mi Porqueriza">
+        </div>
+        <div><label class="lbl">Propietario</label>
+          <input id="cfg-owner" value="${esc(state.settings.owner||"")}" placeholder="Tu nombre">
+        </div>
+        <div><label class="lbl">Moneda</label>
+          <select id="cfg-currency">
+            <option value="₡" ${state.settings.currency==="₡"?"selected":""}>₡ Colones (CRC)</option>
+            <option value="$" ${state.settings.currency==="$"?"selected":""}>$ Dólares (USD)</option>
+            <option value="Q" ${state.settings.currency==="Q"?"selected":""}>Q Quetzales (GTQ)</option>
+            <option value="L" ${state.settings.currency==="L"?"selected":""}>L Lempiras (HNL)</option>
+          </select>
+        </div>
+        <button class="btn bp" style="width:100%" onclick="saveSettings()">Guardar configuración</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:14px">📤 Exportar datos</div>
+      <div style="display:grid;gap:10px">
+        <button class="btn bg" style="width:100%" onclick="exportExcel()">📊 Exportar a Excel (.xlsx)</button>
+        <button class="btn bs" style="width:100%" onclick="window.print()">📄 Exportar a PDF (imprimir)</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:6px">💾 Copias de seguridad</div>
+      <div style="font-size:12px;color:#9E7A65;margin-bottom:14px">Guarda todos tus datos seguros en tu iPhone</div>
+      <div style="display:grid;gap:10px">
+        <button class="btn bp" style="width:100%" onclick="downloadBackup()">⬇️ Crear copia de seguridad</button>
+        <button class="btn bs" style="width:100%" onclick="document.getElementById('restore-file').click()">⬆️ Restaurar copia de seguridad</button>
+        <input type="file" id="restore-file" accept=".json" style="display:none" onchange="restoreBackup(this)">
+      </div>
+      <div style="font-size:12px;color:#9E7A65;margin-top:12px;background:#F5EDE4;border-radius:10px;padding:11px">
+        💡 <strong>Tip iPhone:</strong> Guarda el archivo .json en <strong>Archivos → iCloud Drive</strong> para accederlo desde cualquier dispositivo. Haz respaldo semanal.
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="font-weight:700;font-size:14px;margin-bottom:12px">📊 Estadísticas generales</div>
+      <div class="g2">
+        ${[{icon:"🐷",val:state.animals.length,lbl:"Animales"},{icon:"🐣",val:state.partos.length,lbl:"Registros cría"},{icon:"💸",val:state.expenses.length,lbl:"Gastos"},{icon:"🤝",val:state.sales.length,lbl:"Ventas"}].map(x=>`
+        <div style="background:#F5EDE4;border-radius:10px;padding:12px;text-align:center">
+          <div style="font-size:24px">${x.icon}</div>
+          <div style="font-family:Sora,sans-serif;font-size:22px;font-weight:800">${x.val}</div>
+          <div style="font-size:11px;color:#9E7A65">${x.lbl}</div>
+        </div>`).join("")}
+      </div>
+    </div>
+
+    <div style="text-align:center;font-size:11px;color:#C8B4A4;padding-bottom:4px">
+      Porqueriza App v2.0 · Datos en localStorage
+    </div>
+  </div>`;
+}
+
+function saveSettings() {
+  state.settings.farmName  = document.getElementById("cfg-name").value.trim() || "Mi Porqueriza";
+  state.settings.owner     = document.getElementById("cfg-owner").value.trim();
+  state.settings.currency  = document.getElementById("cfg-currency").value;
+  saveState(); renderApp(); showToast("Configuración guardada");
+}
+
+function exportExcel() {
+  if (typeof XLSX === "undefined") { showToast("XLSX no cargado. Verifique conexión a internet","err"); return; }
+  try {
+    const wb = XLSX.utils.book_new();
+    const animData = state.animals.map(a=>({Arete:a.tag,Nombre:a.name,Tipo:a.type,Raza:a.breed,"F.Nacimiento":a.birthDate,"F.Ingreso":a.entryDate,"Peso(kg)":a.weight,Estado:a.status,Notas:a.notes}));
+    const pData = state.partos.map(p=>{
+      const sow=state.animals.find(a=>a.id===p.sowId);
+      const boar=state.animals.find(a=>a.id===p.boarId);
+      return {Cerda:sow?.name||sow?.tag||"",Barraco:boar?.name||boar?.tag||"","F.Servicio":p.serviceDate,"PartoEsperado":p.expectedBirthDate,"F.Parto":p.birthDate,Estado:p.status,Vivos:p.pigletsAlive,Muertos:p.pigletsDead,Destetados:p.pigletsWeaned,"F.Destete":p.weaningDate,PrecioLechon:p.salePrice,Notas:p.notes};
+    });
+    const eData = state.expenses.map(e=>({Fecha:e.date,Categoría:e.category,Descripción:e.description,Monto:e.amount}));
+    const sData = state.sales.map(s=>({Fecha:s.date,Cantidad:s.quantity,"Precio/Lechón":s.pricePerHead,Total:s.quantity*s.pricePerHead,Comprador:s.buyerName,Notas:s.notes}));
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(animData.length?animData:[{}]), "Animales");
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(pData.length?pData:[{}]),    "Cría");
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(eData.length?eData:[{}]),    "Gastos");
+    XLSX.utils.book_append_sheet(wb, XLSX.utils.json_to_sheet(sData.length?sData:[{}]),    "Ventas");
+    XLSX.writeFile(wb, (state.settings.farmName||"porqueriza").replace(/\s+/g,"_")+".xlsx");
+    showToast("Excel exportado exitosamente");
+  } catch(e) { showToast("Error al exportar Excel","err"); console.error(e); }
+}
+
+function downloadBackup() {
+  const data = JSON.stringify(state, null, 2);
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([data], {type:"application/json"}));
+  a.download = (state.settings.farmName||"porqueriza").replace(/\s+/g,"_")+"_backup_"+today()+".json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+  showToast("Copia de seguridad descargada");
+}
+
+function restoreBackup(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const d = JSON.parse(e.target.result);
+      if (!d.animals) throw new Error("Archivo inválido");
+      state.animals  = d.animals  || [];
+      state.partos   = d.partos   || [];
+      state.expenses = d.expenses || [];
+      state.sales    = d.sales    || [];
+      if (d.settings) state.settings = Object.assign({}, state.settings, d.settings);
+      saveState(); renderApp(); showToast("Copia restaurada exitosamente");
+    } catch(err) {
+      showToast("Archivo de respaldo inválido","err");
+    }
+  };
+  reader.readAsText(file);
+  input.value = "";
+}
+
+// ═══════════════════════════════════════════════
+//  MODAL
+// ═══════════════════════════════════════════════
+function closeModal(event) {
+  if (event && event.target !== event.currentTarget) return;
+  document.getElementById("modal-container").innerHTML = "";
+}
+
+// ═══════════════════════════════════════════════
+//  XLSX - cargar desde CDN de forma diferida
+// ═══════════════════════════════════════════════
+function loadXLSX() {
+  if (typeof XLSX !== "undefined") return;
+  const s = document.createElement("script");
+  s.src = "https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.min.js";
+  document.head.appendChild(s);
+}
+
+// ═══════════════════════════════════════════════
+//  INICIALIZACIÓN
+// ═══════════════════════════════════════════════
+loadState();
+loadXLSX();
+renderApp();
+</script>
+</body>
+</html>
